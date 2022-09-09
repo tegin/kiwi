@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlancadef save
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record model="ir.ui.view" id="queue_token_location_form_view">
+        <field name="name">queue.token.location.form (in queue_management)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <!-- TODO -->
+                    <group>
+                        <field name="token_id" />
+                        <field name="group_id" />
+                        <field name="location_id" />
+
+                    </group>
+                    <notebook>
+                        <page name="log" string="Log data">
+                            <group>
+                                <group>
+                                    <field name="assign_date" />
+                                    <field name="assign_user_id" />
+                                </group>
+                                <group>
+                                    <field name="leave_date" />
+                                    <field name="leave_user_id" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_location_search_view">
+        <field name="name">queue.token.location.search (in queue_management)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="token_id" />
+                <field name="group_id" />
+                <field name="location_id" />
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_location_tree_view">
+        <field name="name">queue.token.location.tree (in queue_management)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <tree
+                decoration-success="state == 'done'"
+                decoration-info="state== 'in-progress'"
+            >
+                <field name="token_id" />
+                <field name="group_id" />
+                <field name="location_id" />
+                <field name="leave_date" />
+                <field name="state" invisible="1" />
+                <button name="action_assign" type="object" string="Assign" />
+                <button name="action_leave" type="object" string="Leave" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_location_editable_tree_view">
+        <field name="name">queue.token.location.tree (in queue_management)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <tree
+                editable="bottom"
+                decoration-success="state == 'done'"
+                decoration-info="state == 'in-progress'"
+            >
+                <field
+                    name="location_id"
+                    attrs="{'required': [('group_id', '=', False)], 'readonly': [('group_id', '!=', False)]}"
+                />
+                <field
+                    name="group_id"
+                    attrs="{'required': [('location_id', '=', False)], 'readonly': [('location_id', '!=', False)]}"
+                />
+                <field name="state" invisible="1" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_token_location_act_window">
+        <field name="name">Token Locations</field>
+        <field name="res_model">queue.token.location</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>
