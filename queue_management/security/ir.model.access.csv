@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acl_queue_token_user,queue.token default,model_queue_token,base.group_user,1,1,1,1
+acl_queue_location_user,queue.location default,model_queue_location,base.group_user,1,1,1,1
+acl_queue_location_groups_user,queue.location.groups default,model_queue_location_group,base.group_user,1,1,1,1
+acl_queue_token_location_groups_user,queue.token.location default,model_queue_token_location,base.group_user,1,1,1,1
