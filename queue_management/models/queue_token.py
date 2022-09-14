@@ -16,6 +16,23 @@ class QueueToken(models.Model):
         required=True, readonly=True, index=True, default=lambda self: _("New")
     )
     location_ids = fields.One2many("queue.token.location", inverse_name="token_id")
+    state = fields.Selection(
+        [("in-progress", "In Progress"), ("done", "Done")],
+        compute="_compute_state",
+        store=True,
+        index=True,
+    )
+
+    active = fields.Boolean(default=True)
+
+    @api.depends("location_ids.state")
+    def _compute_state(self):
+        for record in self:
+            record.state = (
+                "done"
+                if all(location.state == "done" for location in record.location_ids)
+                else "in-progress"
+            )
 
     @api.model_create_multi
     def create(self, mvals):
