@@ -12,4 +12,11 @@
         web_icon="queue_management,static/description/icon.png"
         sequence="40"
     />
+    <menuitem
+        name="Configuration"
+        id="queue_config_root_menu"
+        parent="queue_root_menu"
+        sequence="90"
+        groups="group_queue_admin"
+    />
 </odoo>
