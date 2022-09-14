@@ -1,7 +1,7 @@
 # Copyright 2022 CreuBlanca
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -25,15 +25,33 @@ class QueueTokenLocation(models.Model):
         readonly=True,
     )
 
+    active = fields.Boolean(default=True)
+
     assign_date = fields.Datetime(readonly=True)
     assign_user_id = fields.Many2one("res.users", readonly=True)
 
     leave_date = fields.Datetime(readonly=True)
     leave_user_id = fields.Many2one("res.users", readonly=True)
 
+    @api.constrains("state", "token_id")
+    def _check_token_state(self):
+        for record in self:
+            if record.state != "in-progress":
+                continue
+            if self.search(
+                [
+                    ("id", "!=", record.id),
+                    ("token_id", "=", record.token_id.id),
+                    ("state", "=", "in-progress"),
+                ],
+                limit=1,
+            ):
+                raise ValidationError(
+                    _("Token %s already has an assigned location. Close it first")
+                    % record.token_id.name
+                )
+
     def action_assign(self):
-        """
-        """
         self.ensure_one()
         location = self.env["queue.location"].browse(
             self.env.context.get("location_id")
@@ -41,8 +59,6 @@ class QueueTokenLocation(models.Model):
         self._action_assign(location)
 
     def _action_assign(self, location):
-        """
-        """
         if not location:
             raise ValidationError(_("Location is required"))
         if self.state != "draft":
@@ -51,7 +67,6 @@ class QueueTokenLocation(models.Model):
             raise ValidationError(_("Location is not in the assigned group"))
         if self.location_id and self.location_id != location:
             raise ValidationError(_("Location is different to the assigned location"))
-
         # We well leave all previous tokens. We might want to close
         previous_token = self.search(
             [("location_id", "=", location.id), ("state", "=", "in-progress")]
@@ -72,8 +87,6 @@ class QueueTokenLocation(models.Model):
         }
 
     def action_leave(self):
-        """
-        """
         self.ensure_one()
         location = self.env["queue.location"].browse(
             self.env.context.get("location_id")
@@ -81,8 +94,6 @@ class QueueTokenLocation(models.Model):
         self._action_leave(location)
 
     def _action_leave(self, location):
-        """
-        """
         if self.state != "in-progress":
             raise ValidationError(_("You cannot close a not assigned item"))
         if not location:
@@ -92,8 +103,6 @@ class QueueTokenLocation(models.Model):
         self.write(self._action_leave_vals(location))
 
     def _action_leave_vals(self, location):
-        """
-        """
         return {
             "state": "done",
             "leave_date": fields.Datetime.now(),

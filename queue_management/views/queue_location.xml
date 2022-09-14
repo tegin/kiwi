@@ -2,12 +2,12 @@
 <!-- Copyright 2022 CreuBlanca
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
-
+    <!-- Action window for users  -->
     <record model="ir.ui.view" id="queue_location_form_view">
         <field name="name">queue.location.form (in queue_management)</field>
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
-            <form>
+            <form create="0" edit="0" delete="0">
                 <header>
                     <!-- TODO -->
                 </header>
@@ -16,12 +16,19 @@
                     <group>
                         <field name="name" />
                         <field name="group_ids" widget="many2many_tags" />
+                        <field name="active" invisible="1" />
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
                     </group>
                     <notebook>
                         <page name="token" string="Work List">
                             <field
                                 name="token_location_ids"
-                                context="{'location_id': id}"
+                                context="{'tree_view_ref':'queue_management.queue_token_location_location_tree_view','location_id': id}"
                             />
                         </page>
                         <page name="token_done" string="Tokens Done">
@@ -37,29 +44,133 @@
         </field>
     </record>
 
+    <!-- Action window for configuration  -->
+    <record model="ir.ui.view" id="queue_location_config_form_view">
+        <field
+            name="name"
+        >queue.location.form Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- TODO -->
+                </header>
+                <sheet>
+                    <!-- TODO -->
+                    <group>
+                        <field name="name" />
+                        <field name="group_ids" widget="many2many_tags" />
+                        <field name="active" invisible="1" />
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
+                    </group>
+                    <notebook>
+                        <page name="token" string="Work List">
+                            <field
+                                name="token_location_ids"
+                                context="{'tree_view_ref':'queue_management.queue_token_location_location_tree_view','location_id': id}"
+                            />
+                        </page>
+                        <page name="token_done" string="Tokens Done">
+                            <field
+                                name="token_location_done_ids"
+                                context="{'location_id': id}"
+                            />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <!-- Search for Admin and Processor  -->
     <record model="ir.ui.view" id="queue_location_search_view">
         <field name="name">queue.location.search (in queue_management)</field>
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
             <search>
-                <!-- TODO -->
+                <field name="name" />
+                <separator />
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('active', '=', 0)]"
+                />
             </search>
         </field>
     </record>
 
+    <!-- Tree Processor  -->
     <record model="ir.ui.view" id="queue_location_tree_view">
         <field name="name">queue.location.tree (in queue_management)</field>
         <field name="model">queue.location</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0" export_xlsx="0">
+                <field name="name" />
+                <field name="token_location_ids" string="Waiting" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Tree Admin  -->
+    <record model="ir.ui.view" id="queue_location_config_tree_view">
+        <field
+            name="name"
+        >queue.location.tree Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="priority">90</field>
         <field name="arch" type="xml">
             <tree>
-                <!-- TODO -->
                 <field name="name" />
             </tree>
         </field>
     </record>
 
+
+    <!-- View Location on configuration menu -->
+    <record model="ir.actions.act_window" id="queue_location_config_act_window">
+        <field name="name">Locations</field> <!-- TODO -->
+        <field name="res_model">queue.location</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_location_config_act_window_tree_view"
+    >
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="queue_location_config_tree_view" />
+        <field name="act_window_id" ref="queue_location_config_act_window" />
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_location_config_act_window_form_view"
+    >
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="queue_location_config_form_view" />
+        <field name="act_window_id" ref="queue_location_config_act_window" />
+    </record>
+
+    <record model="ir.ui.menu" id="queue_location_config_menu">
+        <field name="name">Locations</field>
+        <field name="parent_id" ref="queue_config_root_menu" />
+        <field name="action" ref="queue_location_config_act_window" />
+        <field name="sequence" eval="10" /> <!-- TODO -->
+    </record>
+
+    <!-- View Location for users -->
     <record model="ir.actions.act_window" id="queue_location_act_window">
-        <field name="name">Locations 1</field> <!-- TODO -->
+        <field name="name">Locations</field> <!-- TODO -->
         <field name="res_model">queue.location</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
@@ -67,10 +178,10 @@
     </record>
 
     <record model="ir.ui.menu" id="queue_location_menu">
-        <field name="name">Locations 2</field>
+        <field name="name">Locations</field>
         <field name="parent_id" ref="queue_root_menu" />
         <field name="action" ref="queue_location_act_window" />
-        <field name="sequence" eval="16" /> <!-- TODO -->
+        <field name="sequence" eval="32" /> <!-- TODO -->
     </record>
 
 </odoo>

@@ -17,7 +17,6 @@
                         <field name="token_id" />
                         <field name="group_id" />
                         <field name="location_id" />
-
                     </group>
                     <notebook>
                         <page name="log" string="Log data">
@@ -38,6 +37,8 @@
             </form>
         </field>
     </record>
+
+
 
     <record model="ir.ui.view" id="queue_token_location_search_view">
         <field name="name">queue.token.location.search (in queue_management)</field>
@@ -63,16 +64,61 @@
                 <field name="group_id" />
                 <field name="location_id" />
                 <field name="leave_date" />
-                <field name="state" invisible="1" />
-                <button name="action_assign" type="object" string="Assign" />
-                <button name="action_leave" type="object" string="Leave" />
+                <field name="state" invisible="0" />
+                <button
+                    name="action_assign"
+                    type="object"
+                    string="Assign"
+                    invisible="1"
+                />
+                <button
+                    name="action_leave"
+                    type="object"
+                    string="Leave"
+                    invisible="1"
+                />
             </tree>
         </field>
     </record>
 
+    <record model="ir.ui.view" id="queue_token_location_location_tree_view">
+        <field name="name">queue.token.location.tree (in queue_management)</field>
+        <field name="model">queue.token.location</field>
+        <!-- Priority: ¿que hace? -->
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <tree
+                decoration-success="state == 'done'"
+                decoration-info="state == 'in-progress'"
+            >
+                <field name="token_id" />
+                <field name="group_id" />
+                <field name="location_id" />
+                <field name="leave_date" />
+                <field name="state" invisible="1" />
+                <button
+                    name="action_assign"
+                    type="object"
+                    string="Assign"
+                    attrs="{'invisible': [('state', '!=', 'draft')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
+                    name="action_leave"
+                    type="object"
+                    string="Leave"
+                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+            </tree>
+        </field>
+    </record>
+
+
     <record model="ir.ui.view" id="queue_token_location_editable_tree_view">
         <field name="name">queue.token.location.tree (in queue_management)</field>
         <field name="model">queue.token.location</field>
+        <field name="priority">99</field>
         <field name="arch" type="xml">
             <tree
                 editable="bottom"
@@ -87,7 +133,7 @@
                     name="group_id"
                     attrs="{'required': [('location_id', '=', False)], 'readonly': [('location_id', '!=', False)]}"
                 />
-                <field name="state" invisible="1" />
+                <field name="state" invisible="0" />
             </tree>
         </field>
     </record>

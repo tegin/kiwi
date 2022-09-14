@@ -10,7 +10,9 @@
     "author": "CreuBlanca,Odoo Community Association (OCA)",
     "website": "https://github.com/tegin/kiwi",
     "depends": [],
+    "category": "Queue management",
     "data": [
+        "security/security.xml",
         "views/menu.xml",
         "views/queue_token_location.xml",
         "data/ir_sequence_data.xml",
@@ -20,6 +22,7 @@
         "views/queue_token.xml",
     ],
     "demo": [
+        "demo/security.xml",
         "demo/queue_location_groups.xml",
         "demo/queue_location.xml",
         "demo/queue_token.xml",
