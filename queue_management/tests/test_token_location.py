@@ -69,7 +69,7 @@ class TestTokenLocation(SavepointCase):
 
     def test_assignation_wrong_location(self):
         """
-        En el contexto l2 sale un error al asignar token_l1 (que solo esta en l1).
+        We expect an error if the token has the wrong location.
         """
         with self.assertRaises(ValidationError):
             self.token_l1.location_ids.with_context(
@@ -78,7 +78,7 @@ class TestTokenLocation(SavepointCase):
 
     def test_assignation_location_not_in_group(self):
         """
-        En el contexto l2 sale un error al asignar token_g1 (l2 no forma parte de g1).
+        We are expecting an error if I try to assign a token to a wrong location.
         """
         with self.assertRaises(ValidationError):
             self.token_g1.location_ids.with_context(
@@ -87,8 +87,7 @@ class TestTokenLocation(SavepointCase):
 
     def test_assignation_error_assigned(self):
         """
-        Se assignan que l1 a token_g1. En el contexto l1 sale un error al assignar
-        token_g1 pq ya esta asigando previamente en el 1r passo.
+        If we try to assign a token that is already assigned, an error will be raised.
         """
         self.token_g1.location_ids.with_context(
             location_id=self.location_1.id
@@ -101,6 +100,7 @@ class TestTokenLocation(SavepointCase):
     def test_group(self):
         """
         We want to test how it will be managed in a token assigned to a Group
+
         1-  Token will be assigned to a location related to the group.
             Location of the token will be forced as the assigned location
         2-  Token leaves the location, then the state changes
@@ -131,10 +131,7 @@ class TestTokenLocation(SavepointCase):
 
     def test_location(self):
         """
-        Sale error estado de token_l1 s draft
-         al intentar asignar una localizacion que ya existe, cunado el estado
-        del token es in-progress, y
-
+        We want to test the use case when we assign a token directly to a location.
         """
         self.assertEqual(self.token_l1.location_ids.state, "draft")
 
@@ -148,6 +145,10 @@ class TestTokenLocation(SavepointCase):
         self.assertEqual(self.token_l1.location_ids.state, "done")
 
     def test_assign_chained(self):
+        """
+        We expect that when a new token is assigned to the location, the state
+        of the previous token will change to done.
+        """
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
@@ -159,12 +160,16 @@ class TestTokenLocation(SavepointCase):
 
     def test_assignation_exception_no_location(self):
         """
-        Sale error al intentar asignar una localizacion que no existe
+        We ensure that an error is raised if no location is defined on assignation
         """
         with self.assertRaises(ValidationError):
             self.token_l1.location_ids.action_assign()
 
     def test_leave_wrong_location(self):
+        """
+        An error is raised if we relase a token from a location that
+        is not assigned to it.
+        """
         self.token_g3.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
@@ -174,6 +179,9 @@ class TestTokenLocation(SavepointCase):
             ).action_leave()
 
     def test_leave_error_leave_done(self):
+        """
+        We check that the token con only be released once.
+        """
         self.token_g3.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
@@ -186,14 +194,58 @@ class TestTokenLocation(SavepointCase):
             ).action_leave()
 
     def test_leave_error_leave_draft(self):
+        """
+        We ensure that we can only release if the token has already been assigned.
+        """
         with self.assertRaises(ValidationError):
             self.token_l1.location_ids.with_context(
                 location_id=self.location_1.id
             ).action_leave()
 
     def test_leave_exception_no_location(self):
+        """
+        We ensure that an error is raised when we release a token
+        from an undefined location.
+        """
         self.token_g3.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
         with self.assertRaises(ValidationError):
             self.token_g3.location_ids.action_leave()
+
+    def test_token_with_two_locations_error(self):
+        """
+        We cannot have a token with two different locations in state assigned
+        """
+        token = self.env["queue.token"].create({})
+        token_location_1 = self.env["queue.token.location"].create(
+            {"token_id": token.id, "location_id": self.location_1.id}
+        )
+        token_location_2 = self.env["queue.token.location"].create(
+            {"token_id": token.id, "location_id": self.location_2.id}
+        )
+        token_location_1.with_context(location_id=self.location_1.id).action_assign()
+        with self.assertRaises(ValidationError):
+            token_location_2.with_context(
+                location_id=self.location_2.id
+            ).action_assign()
+
+    def test_token_with_two_locations(self):
+        """
+        We check how to manage a token with two different locations
+
+        First we manage one of them, then the other one
+        """
+        token = self.env["queue.token"].create({})
+        token_location_1 = self.env["queue.token.location"].create(
+            {"token_id": token.id, "location_id": self.location_1.id}
+        )
+        token_location_2 = self.env["queue.token.location"].create(
+            {"token_id": token.id, "location_id": self.location_2.id}
+        )
+        token_location_1.with_context(location_id=self.location_1.id).action_assign()
+        token_location_1.with_context(location_id=self.location_1.id).action_leave()
+        token_location_2.with_context(location_id=self.location_2.id).action_assign()
+        token_location_2.with_context(location_id=self.location_2.id).action_leave()
+        self.assertEqual(token_location_1.state, "done")
+        self.assertEqual(token_location_2.state, "done")

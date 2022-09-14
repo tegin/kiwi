@@ -7,14 +7,21 @@
         <field name="name">queue.token.form (in queue_management)</field>
         <field name="model">queue.token</field>
         <field name="arch" type="xml">
-            <form>
+            <form create="0" edit="0" delete="0">
                 <header>
-                    <!-- TODO -->
+                    <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <!-- TODO -->
                     <group>
                         <field name="name" />
+                        <field name="active" invisible="1" />
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
                     </group>
                     <notebook>
                         <page name="location" string="Locations">
@@ -30,12 +37,43 @@
         </field>
     </record>
 
+    <record id="view_queue_token_form_inherit" model="ir.ui.view">
+        <field name="name">queue.token.form.inherit</field>
+        <field name="model">queue.token</field>
+        <field name="inherit_id" ref="queue_token_form_view" />
+        <field name="groups_id" eval="[(4, ref('group_queue_planner'))]" />
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="edit">1</attribute>
+                <attribute name="create">1</attribute>
+                <attribute name="delete">1</attribute>
+            </form>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="queue_token_search_view">
         <field name="name">queue.token.search (in queue_management)</field>
         <field name="model">queue.token</field>
         <field name="arch" type="xml">
             <search>
-                <!-- TODO -->
+                <field name="name" />
+                <separator />
+                <filter
+                    name="state_progress"
+                    string="In progress"
+                    domain="[('state', '=', 'in-progress')]"
+                />
+                <filter
+                    name="state_done"
+                    string="Done"
+                    domain="[('state', '=', 'done')]"
+                />
+                <separator />
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('active', '=', 0)]"
+                />
             </search>
         </field>
     </record>
@@ -44,9 +82,9 @@
         <field name="name">queue.token.tree (in queue_management)</field>
         <field name="model">queue.token</field>
         <field name="arch" type="xml">
-            <tree>
-                <!-- TODO -->
+            <tree default_order="name desc">
                 <field name="name" />
+                <field name="state" />
             </tree>
         </field>
     </record>
@@ -56,7 +94,7 @@
         <field name="res_model">queue.token</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
-        <field name="context">{}</field>
+        <field name="context">{'search_default_state_progress': 1}</field>
     </record>
 
     <record model="ir.ui.menu" id="queue_token_menu">
