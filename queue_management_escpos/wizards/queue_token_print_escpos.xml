@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record model="ir.ui.view" id="queue_token_print_escpos_form_view">
+        <field
+            name="name"
+        >queue.token.print.escpos.form (in queue_management_escpos)</field>
+        <field name="model">queue.token.print.escpos</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="token_id" invisible="1" />
+                    <field
+                        name="printer_id"
+                        options="{'no_create_edit': 1, 'no_create': 1, 'no_open': 1}"
+                    />
+                    <field
+                        name="escpos_id"
+                        options="{'no_create_edit': 1, 'no_create': 1, 'no_open': 1l}"
+                    />
+                </group>
+                <footer>
+                    <button
+                        name="print_escpos"
+                        string="Print"
+                        icon="fa-print"
+                        class="btn-primary"
+                        type="object"
+                    />
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_token_print_escpos_act_window">
+        <field name="name">Print Escpos</field>
+        <field name="res_model">queue.token.print.escpos</field>
+        <field name="view_mode">form</field>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+    </record>
+
+
+</odoo>

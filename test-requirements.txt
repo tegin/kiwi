@@ -1,0 +1,1 @@
+odoo13-addon-printer_escpos @git+https://github.com/tegin/report-print-send@13.0-add-printer_escpos#subdirectory=setup/printer_escpos
