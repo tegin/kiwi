@@ -22,6 +22,8 @@ class QueueLocation(models.Model):
         "queue.token.location", compute="_compute_token_location_done"
     )
 
+    active = fields.Boolean(default=True)
+
     @api.depends("group_ids")
     def _compute_token_location(self):
         """
@@ -49,10 +51,6 @@ class QueueLocation(models.Model):
                 [
                     ("state", "=", "done"),
                     ("location_id", "=", record.id),
-                    (
-                        "leave_date",
-                        ">=",
-                        fields.Datetime.now() + timedelta(minutes=-10),
-                    ),
+                    ("leave_date", ">=", fields.Datetime.now() + timedelta(days=-2),),
                 ],
             )
