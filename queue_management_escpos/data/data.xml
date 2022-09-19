@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+    <record id="queue_token_escpos" model="printing.escpos">
+        <field name="name">Queue Token ESCPOS</field>
+        <field name="mode">arch</field>
+        <field name="model_id" ref="queue_management.model_queue_token" />
+        <field name="arch" type="xml">
+            <receipt>
+                <t t-foreach="docs" t-as="doc">
+                    <h1 align="center" t-esc="doc.name" />
+                    <barcode encoding='code39' t-esc="doc.name" />
+                    <qr qrsize="4" align="center" t-esc="doc.name" />
+                    <cut />
+                </t>
+            </receipt>
+        </field>
+    </record>
+</odoo>
