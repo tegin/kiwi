@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record model="ir.ui.view" id="queue_display_tree_view">
+        <field name="name">queue.display.tree (in queue_management_display)</field>
+        <field name="model">queue.display</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="description" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Default view -->
+    <record model="ir.ui.view" id="queue_display_form_view">
+        <field name="name">queue.display.form (in queue_management_display)</field>
+        <field name="model">queue.display</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button
+                            name="open_display"
+                            string="Open display"
+                            icon="fa-tachometer"
+                            type="object"
+                        />
+                    </div>
+                    <group>
+                        <field name="name" />
+                        <field name="description" />
+                        <field name="show_items" />
+                        <field name="max_time" widget="float_time" />
+                        <field name="shiny_time" widget="float_time" />
+                        <field
+                            name="location_ids"
+                            context="{'tree_view_ref':'queue_management.queue_location_config_tree_view', 'form_view_ref': 'queue_management.queue_location_config_form_view'}"
+                        />
+                    </group>
+                    <notebook>
+                        <page name="qweb" string="QWeb">
+                            <field name="qweb" widget="ace" options="{'mode': 'xml'}" />
+                        </page>
+                        <page name="css" string="CSS">
+                            <field name="css" widget="ace" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Dashboard view -->
+    <record model="ir.ui.view" id="queue_display_form_queue_display_view">
+        <field name="name">queue.display.form (in queue_management_display)</field>
+        <field name="model">queue.display</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form js_class="queue_display">
+                <field name="name" />
+                <field name="description" />
+                <field name="show_items" />
+                <field name="items" />
+                <field name="max_time" />
+                <field name="shiny_time" />
+                <field name="qweb" />
+                <field name="css" />
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_display_act_window">
+        <field name="name">Displays</field> <!-- TODO -->
+        <field name="res_model">queue.display</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record model="ir.ui.menu" id="queue_display_menu">
+        <field name="name">Displays</field>
+        <field
+            name="parent_id"
+            ref="queue_management.queue_config_root_menu"
+        /> <!-- TODO -->
+        <field name="action" ref="queue_display_act_window" />
+        <field name="sequence" eval="90" /> <!-- TODO -->
+    </record>
+
+</odoo>
