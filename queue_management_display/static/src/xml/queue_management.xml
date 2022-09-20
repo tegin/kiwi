@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template>
+    <t t-name="queue_management_display.queue_display_token_shiny">
+        <div class="col-6 o_queue_management_display_token">
+            <div t-attf-class="item #{shiny? 'shiny': ''}">
+                <h1 t-esc="token" />
+            </div>
+        </div>
+        <div class="col-6 o_queue_management_display_location">
+            <div t-attf-class="item #{shiny? 'shiny': ''}">
+                <h1 t-esc="location" />
+            </div>
+        </div>
+    </t>
+
+    <t t-name="queue_management_display.queue_display_token">
+        <div class="col-6 o_queue_management_display_token">
+            <h1 t-esc="token" />
+        </div>
+        <div class="col-6 o_queue_management_display_location">
+            <h1 t-esc="location" />
+        </div>
+    </t>
+
+    <t t-name="queue_management.Clock">
+        <div class="o_clock_data">
+            <h2 class="o_clock">
+                <a class="main_clock" />
+            </h2>
+            <h4 class="o_clock_date">
+                <a class="main_clock_date" />
+            </h4>
+        </div>
+    </t>
+
+</template>
