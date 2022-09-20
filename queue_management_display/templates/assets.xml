@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="assets_backend"
+        name="Backend Assets (used in backend interface)"
+        inherit_id="web.assets_backend"
+    >
+        <xpath expr="." position="inside">
+            <script
+                type="text/javascript"
+                src="/queue_management_display/static/src/js/clock.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_display/static/src/js/queue_management_renderer.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_display/static/src/js/queue_management_model.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_display/static/src/js/queue_management_controller.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_display/static/src/js/queue_management_view.js"
+            />
+
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/queue_management_display/static/src/scss/queue_management.scss"
+            />
+        </xpath>
+    </template>
+</odoo>
