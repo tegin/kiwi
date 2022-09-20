@@ -12,7 +12,7 @@
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
-                    <!-- TODO -->
+                    <div class="oe_button_box" name="button_box" />
                     <group>
                         <field name="name" />
                         <field name="active" invisible="1" />
