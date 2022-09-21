@@ -20,6 +20,7 @@
         "views/queue_location.xml",
         "security/ir.model.access.csv",
         "views/queue_token.xml",
+        "templates/assets.xml",
     ],
     "demo": [
         "demo/security.xml",

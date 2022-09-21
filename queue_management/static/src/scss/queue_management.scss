@@ -1,0 +1,29 @@
+.o_kanban_view {
+    .oe_kanban_queue_location {
+        &.oe_kanban_queue_location_warning::after {
+            background-color: $yellow;
+        }
+        &.oe_kanban_queue_location_waiting::after {
+            background-color: $cyan;
+        }
+        &.oe_kanban_queue_location_working::after {
+            background-color: $green;
+        }
+        &.o_kanban_record::after {
+            width: 5px;
+        }
+        .btn_queue_location {
+            font-weight: bold;
+            color: $white;
+            &.btn_queue_location_warning {
+                background-color: $yellow;
+            }
+            &.btn_queue_location_waiting {
+                background-color: $cyan;
+            }
+            &.btn_queue_location_working {
+                background-color: $green;
+            }
+        }
+    }
+}
