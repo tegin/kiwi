@@ -15,14 +15,48 @@ class QueueLocation(models.Model):
 
     name = fields.Char(required=True)
     group_ids = fields.Many2many("queue.location.group")
+    token_location_count = fields.Integer(compute="_compute_token_location_count")
+    last_token_assigned = fields.Datetime(compute="_compute_token_location_count")
+
     token_location_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location"
+    )
+    current_token_location_id = fields.Many2one(
+        "queue.token.location", compute="_compute_current_token"
+    )
+    current_token_id = fields.Many2one(
+        "queue.token", related="current_token_location_id.token_id"
     )
     token_location_done_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location_done"
     )
-
     active = fields.Boolean(default=True)
+    color = fields.Integer("Color Index", default=0, compute="_compute_color")
+
+    @api.depends()
+    def _compute_current_token(self):
+        for record in self:
+            record.current_token_location_id = self.env["queue.token.location"].search(
+                [("location_id", "=", record.id), ("state", "=", "in-progress")],
+                limit=1,
+            )
+
+    @api.depends()
+    def _compute_token_location_count(self):
+        for record in self:
+            record.token_location_count = len(record.token_location_ids)
+            record.last_token_assigned = (
+                self.env["queue.token.location"]
+                .search(
+                    [
+                        ("location_id", "=", record.id),
+                        ("state", "in", ["in-progress", "done"]),
+                    ],
+                    limit=1,
+                    order="assign_date desc",
+                )
+                .assign_date
+            )
 
     @api.depends("group_ids")
     def _compute_token_location(self):
@@ -54,3 +88,19 @@ class QueueLocation(models.Model):
                     ("leave_date", ">=", fields.Datetime.now() + timedelta(days=-2),),
                 ],
             )
+
+    @api.depends()
+    def _compute_color(self):
+        """
+        We will get a different color according to the following:
+        green: It is working (it has an assigned token)
+        orange: It should be working (some tokens are waiting but it has nothing assigned)
+        blue: It is not working (no tokens waiting, nothing assigned)
+        """
+        for record in self:
+            if record.current_token_id:
+                record.color = 10
+            elif record.token_location_ids:
+                record.color = 2
+            else:
+                record.color = 4

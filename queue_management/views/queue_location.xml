@@ -133,6 +133,81 @@
         </field>
     </record>
 
+    <record id='queue_location_config_kanban_view' model='ir.ui.view'>
+        <field
+            name="name"
+        >queue.location.kanban Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="token_location_count" />
+                <field name="color" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div
+                            t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}"
+                        >
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                            <field name="name" />
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#"><i
+                                            class="fa fa-ellipsis-v"
+                                            role="img"
+                                            aria-label="Manage"
+                                            title="Manage"
+                                        /></a>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button
+                                            class="btn btn-primary"
+                                            name="get_formview_action"
+                                            type="object"
+                                        >
+                                            <t
+                                                t-esc="record.token_location_count.value"
+                                            /> To Do
+                                        </button>
+                                    </div>
+                                    <div class="col-12">
+                                        Current token <field name="current_token_id" />
+                                    </div>
+                                    <div class="col-12">
+                                        Last assigned on <field
+                                            name="last_token_assigned"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- TODO: On 14.0 we can add the color on the form using color_picker widget -->
+                            <div class="o_kanban_record_bottom" />
+                            <div
+                                class="container o_kanban_card_manage_pane dropdown-menu"
+                                role="menu"
+                            >
+                                <div class="row">
+                                    <div
+                                        class="col-6 o_kanban_card_manage_section o_kanban_manage_view"
+                                        groups="queue_management.group_queue_admin"
+                                    >
+                                        <!-- TODO: Go tho the right view, filter it-->
+                                        <a type="edit">Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
 
     <!-- View Location on configuration menu -->
     <record model="ir.actions.act_window" id="queue_location_config_act_window">
@@ -172,7 +247,7 @@
     <record model="ir.actions.act_window" id="queue_location_act_window">
         <field name="name">Locations</field> <!-- TODO -->
         <field name="res_model">queue.location</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
         <field name="domain">[]</field>
         <field name="context">{}</field>
     </record>
