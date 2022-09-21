@@ -31,7 +31,10 @@ class QueueLocation(models.Model):
         "queue.token.location", compute="_compute_token_location_done"
     )
     active = fields.Boolean(default=True)
-    color = fields.Integer("Color Index", default=0, compute="_compute_color")
+    state = fields.Selection(
+        [("waiting", "Waiting"), ("working", "Working"), ("warning", "Warning")],
+        compute="_compute_state",
+    )
 
     @api.depends()
     def _compute_current_token(self):
@@ -90,7 +93,7 @@ class QueueLocation(models.Model):
             )
 
     @api.depends()
-    def _compute_color(self):
+    def _compute_state(self):
         """
         We will get a different color according to the following:
         green: It is working (it has an assigned token)
@@ -99,8 +102,8 @@ class QueueLocation(models.Model):
         """
         for record in self:
             if record.current_token_id:
-                record.color = 10
+                record.state = "working"
             elif record.token_location_ids:
-                record.color = 2
+                record.state = "warning"
             else:
-                record.color = 4
+                record.state = "waiting"
