@@ -249,3 +249,82 @@ class TestTokenLocation(SavepointCase):
         token_location_2.with_context(location_id=self.location_2.id).action_leave()
         self.assertEqual(token_location_1.state, "done")
         self.assertEqual(token_location_2.state, "done")
+
+    def test_back_to_draft_group(self):
+        """
+        We check the back to draft functionality on assigned to group.
+
+        We assign a token to location 1
+        We set the token back to draft
+        We assign the token to location 2
+        """
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_1)
+        self.assertEqual(self.token_g3.location_ids.state, "in-progress")
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_back_to_draft()
+        self.assertEqual(self.token_g3.location_ids.state, "draft")
+        self.assertFalse(self.token_g3.location_ids.location_id)
+        # Now we are able to assign it to another location without any issues
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_2)
+        self.assertEqual(self.token_g3.location_ids.state, "in-progress")
+
+    def test_back_to_draft_location(self):
+        """
+        We check the back to draft functionality on assigned to a specific location
+        """
+        self.token_l1.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertEqual(self.token_l1.location_ids.state, "in-progress")
+        self.token_l1.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_back_to_draft()
+        self.assertEqual(self.token_l1.location_ids.state, "draft")
+        self.token_l1.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertEqual(self.token_l1.location_ids.state, "in-progress")
+
+    def test_back_to_draft_error_bad_location(self):
+        """
+        We cannot set a token location back to draft from a wrong location
+        """
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        with self.assertRaises(ValidationError):
+            self.token_g3.location_ids.with_context(
+                location_id=self.location_2.id
+            ).action_back_to_draft()
+
+    def test_back_to_draft_error_no_location(self):
+        """
+        We cannot set a token location back to draft from a wrong location
+        """
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        with self.assertRaises(ValidationError):
+            self.token_g3.location_ids.action_back_to_draft()
+
+    def test_back_to_draft_error_bad_state(self):
+        """
+        We cannot back to draft a token that is not in "in-progress" state
+        """
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_leave()
+        with self.assertRaises(ValidationError):
+            self.token_g3.location_ids.with_context(
+                location_id=self.location_1.id
+            ).action_back_to_draft()
