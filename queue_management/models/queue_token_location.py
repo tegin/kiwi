@@ -108,3 +108,30 @@ class QueueTokenLocation(models.Model):
             "leave_date": fields.Datetime.now(),
             "leave_user_id": self.env.user.id,
         }
+
+    def action_back_to_draft(self):
+        self.ensure_one()
+        location = self.env["queue.location"].browse(
+            self.env.context.get("location_id")
+        )
+        self._action_back_to_draft(location)
+
+    def _action_back_to_draft(self, location):
+        if self.state != "in-progress":
+            raise ValidationError(_("You cannot return to draft a not assigned item"))
+        if not location:
+            raise ValidationError(_("Location is required"))
+        if location != self.location_id:
+            raise ValidationError(_("Location is not the same"))
+        self.write(self._assign_back_to_draft_vals(location))
+
+    def _assign_back_to_draft_vals(self, location):
+        """
+        We create this hook in order to change some fields values.
+        """
+        result = {
+            "state": "draft",
+        }
+        if self.group_id:
+            result["location_id"] = False
+        return result

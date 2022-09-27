@@ -110,6 +110,13 @@
                     attrs="{'invisible': [('state', '!=', 'in-progress')]}"
                     groups="queue_management.group_queue_processor"
                 />
+                <button
+                    name="action_back_to_draft"
+                    type="object"
+                    string="Back to draft"
+                    invisible="0"
+                    groups="queue_management.group_queue_processor"
+                />
             </tree>
         </field>
     </record>
