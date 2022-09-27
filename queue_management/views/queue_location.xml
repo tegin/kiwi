@@ -38,6 +38,13 @@
                                 context="{'location_id': id}"
                             />
                         </page>
+                        <page name='token_cancelled' string='Cancelled Token'>
+                            <field name='token_location_cancelled_ids'
+                            context="{'location_id': id}"
+                            />
+
+
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter" />
@@ -82,6 +89,9 @@
                                 name="token_location_done_ids"
                                 context="{'location_id': id}"
                             />
+                        </page>
+                        <page name='token_cancelled' string='Cancelled Token'>
+
                         </page>
                     </notebook>
                 </sheet>

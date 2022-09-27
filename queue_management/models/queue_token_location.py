@@ -1,6 +1,7 @@
 # Copyright 2022 CreuBlanca
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from tokenize import group
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -19,7 +20,8 @@ class QueueTokenLocation(models.Model):
     location_id = fields.Many2one("queue.location")
     token_id = fields.Many2one("queue.token", required=True)
     state = fields.Selection(
-        [("draft", "Pending"), ("in-progress", "In Progress"), ("done", "Done")],
+        [("draft", "Pending"), ("in-progress", "In Progress"),
+        ("done", "Done"), ("cancelled", "Cancelled")],
         default="draft",
         required=True,
         readonly=True,
@@ -108,3 +110,92 @@ class QueueTokenLocation(models.Model):
             "leave_date": fields.Datetime.now(),
             "leave_user_id": self.env.user.id,
         }
+
+    # TODO: Pass to the right place
+    def action_cancelled(self):
+        self.ensure_one()
+        location = self.env["queue.location"].browse(
+            self.env.context.get("location_id")
+        )
+        self._action_cancelled(location)
+
+    def _action_cancelled(self, location):
+        if self.state not in ["draft", "in-progress"]:
+            raise ValidationError(_("You cannot cancelled an already cancelled item"))
+        if self.group_id and location not in self.group_id.location_ids and not self.env.user.has_group("queue_management.group_queue_planner"):
+            raise ValidationError(_("Location is not in the assigned group"))
+        if self.location_id and self.location_id != location and not self.env.user.has_group("queue_management.group_queue_planner"):
+            raise ValidationError(_("Location is different to the assigned location"))
+
+        self.write(self._action_cancelled_vals(location))
+
+    def _action_cancelled_vals(self, location):
+        return {
+            "state": "cancelled",
+            "location_id": location.id,
+
+        }
+
+    def action_back_to_draft(self):
+        self.ensure_one()
+        location = self.env["queue.location"].browse(
+            self.env.context.get("location_id")
+        )
+        self._action_back_to_draft(location)
+
+    def _action_back_to_draft(self, location):
+        if self.state != "in-progress":
+            raise ValidationError(_("You cannot return to draft a not assigned item"))
+        if not location:
+            raise ValidationError(_("Location is required"))
+        if location != self.location_id:
+            raise ValidationError(_("Location is not the same"))
+        self.write(self._assign_back_to_draft_vals(location))
+
+    def _assign_back_to_draft_vals(self, location):
+        """
+        We create this hook in order to change some fields values.
+        """
+        result = {
+            "state": "draft",
+        }
+        if self.group_id:
+            result["location_id"] = False
+        return result
+
+
+
+#!!!!
+    def action_reopen_cancelled(self):
+        self.ensure_one()
+        location = self.env["queue.location"].browse(
+            self.env.context.get("location_id")
+        )
+        self._action_reopen_cancelled(location)
+
+    def _action_reopen_cancelled(self, location):
+        if self.state != "cancelled":
+            raise ValidationError(_("You cannot reopem a not cancelled item"))
+        if not location:
+            raise ValidationError(_("Location is required"))
+        if location != self.location_id:
+            raise ValidationError(_("Location is not the same"))
+        self.write(self._action_reopen_cancelled_vals(location))
+
+    def _action_reopen_cancelled_vals(self, location):
+        """
+        We create this hook in order to change some fields values.
+        """
+        result = {
+            "state": "draft",
+        }
+        if self.group_id:
+            result["location_id"] = False
+        return result
+
+
+    def action_cancel_inprogress(self):
+        pass
+
+    def action_cancel_draft(self):
+        pass

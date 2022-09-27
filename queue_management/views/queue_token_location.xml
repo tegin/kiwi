@@ -77,6 +77,18 @@
                     string="Leave"
                     invisible="1"
                 />
+                <button
+                    name="action_cancelled"
+                    type="object"
+                    string="Cancel"
+                    invisible="1"
+                />
+                <button
+                    name="action_reopen_cancelled"
+                    type="object"
+                    string="Reopen"
+                    invisible="0"
+            />
             </tree>
         </field>
     </record>
@@ -110,9 +122,23 @@
                     attrs="{'invisible': [('state', '!=', 'in-progress')]}"
                     groups="queue_management.group_queue_processor"
                 />
+                <button
+                    name="action_cancelled"
+                    type="object"
+                    string="Cancel"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
+                    name="action_back_to_draft"
+                    type="object"
+                    string="Back to draft"
+                    invisible="0"
+                    groups="queue_management.group_queue_processor"
+            />
             </tree>
         </field>
     </record>
+
 
 
     <record model="ir.ui.view" id="queue_token_location_editable_tree_view">
