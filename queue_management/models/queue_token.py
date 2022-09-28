@@ -49,4 +49,4 @@ class QueueToken(models.Model):
         We create this hook in order to fill specific specifications of each implementation
         In some case, we might want to get the sequence from some data, so we keep it this way
         """
-        return self.env["ir.sequence"].next_by_code("queue.token") or _("New")
+        return self.env["ir.sequence"].sudo().next_by_code("queue.token") or _("New")
