@@ -77,6 +77,12 @@
                     string="Leave"
                     invisible="1"
                 />
+                <button
+                    name="action_cancelled"
+                    type="object"
+                    string="Cancel"
+                    invisible="1"
+                />
             </tree>
         </field>
     </record>
@@ -111,15 +117,23 @@
                     groups="queue_management.group_queue_processor"
                 />
                 <button
+                    name="action_cancelled"
+                    type="object"
+                    string="Cancel"
+                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
                     name="action_back_to_draft"
                     type="object"
                     string="Back to draft"
-                    invisible="0"
+                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
                     groups="queue_management.group_queue_processor"
                 />
             </tree>
         </field>
     </record>
+
 
 
     <record model="ir.ui.view" id="queue_token_location_editable_tree_view">
@@ -134,13 +148,25 @@
             >
                 <field
                     name="location_id"
-                    attrs="{'required': [('group_id', '=', False)], 'readonly': [('group_id', '!=', False)]}"
+                    attrs="{'required': [('group_id', '=', False)], 'readonly': ['|', ('group_id', '!=', False), ('state', '!=', 'draft')]}"
                 />
                 <field
                     name="group_id"
-                    attrs="{'required': [('location_id', '=', False)], 'readonly': [('location_id', '!=', False)]}"
+                    attrs="{'required': [('location_id', '=', False)], 'readonly': ['|', ('location_id', '!=', False), ('state', '!=', 'draft')]}"
                 />
                 <field name="state" invisible="0" />
+                <button
+                    name="action_reopen_cancelled"
+                    type="object"
+                    string="Reopen"
+                    states="cancelled"
+                />
+                <button
+                    name="action_cancelled"
+                    type="object"
+                    string="Cancel"
+                    attrs="{'invisible': [('state', '==', 'cancelled')]}"
+                />
             </tree>
         </field>
     </record>
