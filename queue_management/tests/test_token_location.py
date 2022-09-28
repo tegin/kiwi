@@ -9,6 +9,24 @@ class TestTokenLocation(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.user_planner = cls.env["res.users"].create(
+            {
+                "name": "Planner",
+                "login": "queue_planner",
+                "groups_id": [
+                    (4, cls.env.ref("queue_management.group_queue_planner").id)
+                ],
+            }
+        )
+        cls.user_processor = cls.env["res.users"].create(
+            {
+                "name": "Processor",
+                "login": "queue_processor",
+                "groups_id": [
+                    (4, cls.env.ref("queue_management.group_queue_processor").id)
+                ],
+            }
+        )
         cls.group_1 = cls.env["queue.location.group"].create({"name": "G1"})
         cls.group_2 = cls.env["queue.location.group"].create({"name": "G2"})
         cls.group_3 = cls.env["queue.location.group"].create({"name": "G3"})
@@ -18,21 +36,31 @@ class TestTokenLocation(SavepointCase):
         cls.location_2 = cls.env["queue.location"].create(
             {"name": "L2", "group_ids": [(4, cls.group_2.id), (4, cls.group_3.id)]}
         )
-
-        cls.token_l1 = cls.env["queue.token"].create(
-            {"location_ids": [(0, 0, {"location_id": cls.location_1.id})]}
+        # We will use allways the planner user unless we need another one
+        cls.token_l1 = (
+            cls.env["queue.token"]
+            .with_user(cls.user_planner)
+            .create({"location_ids": [(0, 0, {"location_id": cls.location_1.id})]})
         )
-        cls.token_l2 = cls.env["queue.token"].create(
-            {"location_ids": [(0, 0, {"location_id": cls.location_2.id})]}
+        cls.token_l2 = (
+            cls.env["queue.token"]
+            .with_user(cls.user_planner)
+            .create({"location_ids": [(0, 0, {"location_id": cls.location_2.id})]})
         )
-        cls.token_g1 = cls.env["queue.token"].create(
-            {"location_ids": [(0, 0, {"group_id": cls.group_1.id})]}
+        cls.token_g1 = (
+            cls.env["queue.token"]
+            .with_user(cls.user_planner)
+            .create({"location_ids": [(0, 0, {"group_id": cls.group_1.id})]})
         )
-        cls.token_g2 = cls.env["queue.token"].create(
-            {"location_ids": [(0, 0, {"group_id": cls.group_2.id})]}
+        cls.token_g2 = (
+            cls.env["queue.token"]
+            .with_user(cls.user_planner)
+            .create({"location_ids": [(0, 0, {"group_id": cls.group_2.id})]})
         )
-        cls.token_g3 = cls.env["queue.token"].create(
-            {"location_ids": [(0, 0, {"group_id": cls.group_3.id})]}
+        cls.token_g3 = (
+            cls.env["queue.token"]
+            .with_user(cls.user_planner)
+            .create({"location_ids": [(0, 0, {"group_id": cls.group_3.id})]})
         )
 
     def test_location_items(self):
@@ -328,3 +356,89 @@ class TestTokenLocation(SavepointCase):
             self.token_g3.location_ids.with_context(
                 location_id=self.location_1.id
             ).action_back_to_draft()
+
+    def test_action_reopen_draft_cancelled(self):
+        self.token_l2.location_ids.action_cancel()
+        self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
+        self.assertEqual(self.token_l2.location_ids.state, "cancelled")
+        self.token_l2.location_ids.action_reopen_cancelled()
+        self.assertEqual(self.token_l2.location_ids.state, "draft")
+
+    def test_action_reopen_assign_cancelled(self):
+        self.token_l2.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.token_l2.location_ids.action_cancel()
+        self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
+        self.assertEqual(self.token_l2.location_ids.state, "cancelled")
+        self.token_l2.location_ids.action_reopen_cancelled()
+        self.assertEqual(self.token_l2.location_ids.state, "draft")
+
+    def test_action_reopen_assign_cancelled_processor_error(self):
+        self.token_l2.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        with self.assertRaises(ValidationError):
+            self.token_l2.location_ids.with_user(self.user_processor).action_cancel()
+
+    def test_action_reopen_assign_cancelled_proccessor(self):
+        """
+        Processor should be able to cancel a token location, iif he access the token
+        from the location view
+        """
+        self.token_l2.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.token_l2.location_ids.with_user(self.user_processor).with_context(
+            location_id=self.location_2.id
+        ).action_cancel()
+        self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
+        self.assertEqual(self.token_l2.location_ids.state, "cancelled")
+        self.token_l2.location_ids.action_reopen_cancelled()
+        self.assertEqual(self.token_l2.location_ids.state, "draft")
+
+    def test_action_reopen_assign_cancelled_group(self):
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_2)
+        self.token_g3.location_ids.action_cancel()
+        self.assertFalse(self.token_g3.location_ids.location_id)
+        self.assertEqual(self.token_g3.location_ids.state, "cancelled")
+        self.token_g3.location_ids.action_reopen_cancelled()
+        self.assertEqual(self.token_g3.location_ids.state, "draft")
+        self.assertFalse(self.token_g3.location_ids.location_id)
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_1)
+
+    def test_action_reopen_assign_cancelled_group_processor_error(self):
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_2)
+        with self.assertRaises(ValidationError):
+            self.token_g3.location_ids.with_user(self.user_processor).action_cancel()
+
+    def test_action_reopen_assign_cancelled_group_processor(self):
+        """
+        Processor should be able to cancel a token location, iif he access the token
+        from the location view
+        """
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_2.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_2)
+        self.token_g3.location_ids.with_user(self.user_processor).with_context(
+            location_id=self.location_2.id
+        ).action_cancel()
+        self.assertFalse(self.token_g3.location_ids.location_id)
+        self.assertEqual(self.token_g3.location_ids.state, "cancelled")
+        self.token_g3.location_ids.action_reopen_cancelled()
+        self.assertEqual(self.token_g3.location_ids.state, "draft")
+        self.assertFalse(self.token_g3.location_ids.location_id)
+        self.token_g3.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertEqual(self.token_g3.location_ids.location_id, self.location_1)
