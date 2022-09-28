@@ -30,6 +30,9 @@ class QueueLocation(models.Model):
     token_location_done_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location_done"
     )
+    token_location_cancelled_ids = fields.Many2many(
+        "queue.token.location", compute="_compute_token_location_cancelled"
+    )
     active = fields.Boolean(default=True)
     state = fields.Selection(
         [("waiting", "Waiting"), ("working", "Working"), ("warning", "Warning")],
@@ -91,6 +94,16 @@ class QueueLocation(models.Model):
                     ("leave_date", ">=", fields.Datetime.now() + timedelta(days=-2),),
                 ],
             )
+
+    @api.depends()
+    def _compute_token_location_cancelled(self):
+        """
+        Fill the token_status_cancelled field with the tokens and theirs location/group.
+        """
+        for record in self:
+            record.token_location_cancelled_ids = self.env[
+                "queue.token.location"
+            ].search([("state", "=", "cancelled"), ("location_id", "=", record.id)])
 
     @api.depends()
     def _compute_state(self):
