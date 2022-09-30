@@ -37,6 +37,24 @@ class QueueTokenLocation(models.Model):
 
     leave_date = fields.Datetime(readonly=True)
     leave_user_id = fields.Many2one("res.users", readonly=True)
+    cancel_date = fields.Datetime(store=True, compute="_compute_cancel_date")
+    token_location_action_ids = fields.One2many(
+        "queue.token.location.action", inverse_name="token_location_id"
+    )
+
+    @api.depends(
+        "state", "token_location_action_ids.action", "token_location_action_ids.date"
+    )
+    def _compute_cancel_date(self):
+        for record in self:
+            if record.state != "cancelled":
+                record.cancel_date = False
+                continue
+            actions = record.token_location_action_ids.filtered(
+                lambda r: r.action == "cancel"
+            )
+            if actions:
+                record.cancel_date = actions[-1].date
 
     @api.depends("name", "state")
     def name_get(self):
