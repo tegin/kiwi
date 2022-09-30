@@ -38,6 +38,24 @@ class QueueTokenLocation(models.Model):
     leave_date = fields.Datetime(readonly=True)
     leave_user_id = fields.Many2one("res.users", readonly=True)
 
+    @api.depends("name", "state")
+    def name_get(self):
+        result = []
+        for record in self:
+            if record.location_id:
+                result.append(
+                    (
+                        record.id,
+                        "%s-%s" % (record.token_id.name, record.location_id.name),
+                    )
+                )
+            elif record.group_id:
+                result.append(
+                    (record.id, "%s-%s" % (record.token_id.name, record.group_id.name))
+                )
+
+        return result
+
     @api.constrains("state", "token_id")
     def _check_token_state(self):
         for record in self:
@@ -79,6 +97,7 @@ class QueueTokenLocation(models.Model):
         if previous_token:
             previous_token._action_leave(location)
         self.write(self._assign_action_vals(location))
+        self._add_action_log("assign", location)
 
     def _assign_action_vals(self, location):
         """
@@ -106,6 +125,7 @@ class QueueTokenLocation(models.Model):
         if location != self.location_id:
             raise ValidationError(_("Location is not the same"))
         self.write(self._action_leave_vals(location))
+        self._add_action_log("leave", location)
 
     def _action_leave_vals(self, location):
         return {
@@ -138,6 +158,7 @@ class QueueTokenLocation(models.Model):
             raise ValidationError(_("Location is different to the assigned location"))
 
         self.write(self._action_cancel_vals(location))
+        self._add_action_log("cancel", location)
 
     def _action_cancel_vals(self, location):
         result = {
@@ -162,6 +183,7 @@ class QueueTokenLocation(models.Model):
         if location != self.location_id:
             raise ValidationError(_("Location is not the same"))
         self.write(self._assign_back_to_draft_vals(location))
+        self._add_action_log("back_to_draft", location)
 
     def _assign_back_to_draft_vals(self, location):
         """
@@ -188,6 +210,7 @@ class QueueTokenLocation(models.Model):
         if not self.location_id and not self.group_id:
             raise ValidationError(_("Location or group is required"))
         self.write(self._assign_reopen_cancelled_vals(location))
+        self._add_action_log("reopen", location)
 
     def _assign_reopen_cancelled_vals(self, location):
         """
@@ -198,3 +221,15 @@ class QueueTokenLocation(models.Model):
         }
 
         return result
+
+    def _add_action_log(self, action, location=False):
+        return self.env["queue.token.location.action"].create(
+            {
+                "token_id": self.token_id.id,
+                "token_location": self.id,
+                "location_id": location and location.id,
+                "user_id": self.env.user.id,
+                "date": fields.Datetime.now(),
+                "action": action,
+            }
+        )

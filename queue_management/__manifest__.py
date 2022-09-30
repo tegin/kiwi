@@ -12,6 +12,7 @@
     "depends": [],
     "category": "Queue management",
     "data": [
+        "views/queue_token_location_action.xml",
         "security/security.xml",
         "views/menu.xml",
         "views/queue_token_location.xml",
