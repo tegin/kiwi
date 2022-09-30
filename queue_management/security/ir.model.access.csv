@@ -16,3 +16,7 @@ acl_queue_location_groups_admin,queue.location.groups Administrator,model_queue_
 acl_queue_token_location_groups_planner,queue.token.location Planner,model_queue_token_location,group_queue_planner,1,1,1,1
 acl_queue_token_location_groups_processor,queue.token.location Processor,model_queue_token_location,group_queue_processor,1,1,0,0
 acl_queue_token_location_groups_admin,queue.token.location Administrator,model_queue_token_location,group_queue_admin,1,1,1,1
+
+acl_queue_token_location_action_groups_planner,queue.token.location.action Planner,model_queue_token_location_action,group_queue_planner,1,1,1,1
+acl_queue_token_location_action_groups_processor,queue.token.location.action Processor,model_queue_token_location_action,group_queue_processor,1,1,1,1
+acl_queue_token_location_action_groups_admin,queue.token.location.action Administrator,model_queue_token_location_action,group_queue_admin,1,1,1,1
