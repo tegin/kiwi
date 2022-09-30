@@ -78,7 +78,7 @@
                     invisible="1"
                 />
                 <button
-                    name="action_cancelled"
+                    name="action_cancel"
                     type="object"
                     string="Cancel"
                     invisible="1"
@@ -117,7 +117,7 @@
                     groups="queue_management.group_queue_processor"
                 />
                 <button
-                    name="action_cancelled"
+                    name="action_cancel"
                     type="object"
                     string="Cancel"
                     attrs="{'invisible': [('state', '!=', 'in-progress')]}"
@@ -162,7 +162,7 @@
                     states="cancelled"
                 />
                 <button
-                    name="action_cancelled"
+                    name="action_cancel"
                     type="object"
                     string="Cancel"
                     attrs="{'invisible': [('state', '==', 'cancelled')]}"
