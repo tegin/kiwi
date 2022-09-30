@@ -358,11 +358,22 @@ class TestTokenLocation(SavepointCase):
             ).action_back_to_draft()
 
     def test_action_reopen_draft_cancelled(self):
+        self.assertNotIn(
+            self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
+        )
         self.token_l2.location_ids.action_cancel()
         self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
         self.assertEqual(self.token_l2.location_ids.state, "cancelled")
+        self.location_2.refresh()
+        self.assertIn(
+            self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
+        )
         self.token_l2.location_ids.action_reopen_cancelled()
         self.assertEqual(self.token_l2.location_ids.state, "draft")
+        self.location_2.refresh()
+        self.assertNotIn(
+            self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
+        )
 
     def test_action_reopen_assign_cancelled(self):
         self.token_l2.location_ids.with_context(
