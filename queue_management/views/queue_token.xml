@@ -12,7 +12,14 @@
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box" />
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_view_log"
+                            type="object"
+                            string="Show Log"
+                            icon="fa-history"
+                        />
+                    </div>
                     <group>
                         <field name="name" />
                         <field name="active" invisible="1" />
@@ -90,7 +97,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="queue_token_act_window">
-        <field name="name">Tokens</field> <!-- TODO -->
+        <field name="name">Tokens</field>
         <field name="res_model">queue.token</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
@@ -101,7 +108,7 @@
         <field name="name">Tokens</field>
         <field name="parent_id" ref="queue_root_menu" />
         <field name="action" ref="queue_token_act_window" />
-        <field name="sequence" eval="16" /> <!-- TODO -->
+        <field name="sequence" eval="16" />
     </record>
 
 </odoo>

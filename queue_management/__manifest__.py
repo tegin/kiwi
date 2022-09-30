@@ -12,7 +12,6 @@
     "depends": [],
     "category": "Queue management",
     "data": [
-        "views/queue_token_location_action.xml",
         "security/security.xml",
         "views/menu.xml",
         "views/queue_token_location.xml",
@@ -21,6 +20,7 @@
         "views/queue_location.xml",
         "security/ir.model.access.csv",
         "views/queue_token.xml",
+        "views/queue_token_location_action.xml",
         "templates/assets.xml",
     ],
     "demo": [

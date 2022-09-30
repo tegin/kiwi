@@ -50,3 +50,11 @@ class QueueToken(models.Model):
         In some case, we might want to get the sequence from some data, so we keep it this way
         """
         return self.env["ir.sequence"].sudo().next_by_code("queue.token") or _("New")
+
+    def action_view_log(self):
+        self.ensure_one()
+        action = self.env.ref(
+            "queue_management.queue_token_location_action_act_window"
+        ).read()[0]
+        action["domain"] = [("token_id", "=", self.id)]
+        return action

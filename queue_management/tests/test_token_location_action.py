@@ -5,7 +5,6 @@ from odoo.tests.common import TransactionCase
 
 
 class TestTokenLocationAction(TransactionCase):
-
     def setUp(self):
         super().setUp()
 
@@ -26,19 +25,6 @@ class TestTokenLocationAction(TransactionCase):
             {"location_ids": [(0, 0, {"location_id": self.location_2.id})]}
         )
 
-
-    def test_token_location_assign_action(self):
-        self.token_l1.location_ids.with_context(
-            location_id=self.location_1.id
-        ).action_assign()
-        last_row = self.env["queue.token.location.action"].search([])[-1]
-        self.assertEqual(last_row.action , "assign")
-        self.assertEqual(last_row.token_id.id, self.token_l1.id)
-        self.assertEqual(last_row.token_location.id, self.token_l1.location_ids.id)
-        self.assertEqual(last_row.location_id.id, self.location_1.id)
-        self.assertTrue(last_row.date)
-        self.assertEqual(last_row.user_id.id, self.env.user.id)
-
     def test_token_location_back_to_draft_action(self):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
@@ -46,10 +32,13 @@ class TestTokenLocationAction(TransactionCase):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_back_to_draft()
-        last_row = self.env["queue.token.location.action"].search([])[-1]
-        self.assertEqual(last_row.action , "back_to_draft")
+        action = self.token_l1.action_view_log()
+        last_row = self.env[action["res_model"]].search(
+            action["domain"], limit=1, order="id desc"
+        )
+        self.assertEqual(last_row.action, "back_to_draft")
         self.assertEqual(last_row.token_id.id, self.token_l1.id)
-        self.assertEqual(last_row.token_location.id, self.token_l1.location_ids.id)
+        self.assertEqual(last_row.token_location_id.id, self.token_l1.location_ids.id)
         self.assertEqual(last_row.location_id.id, self.location_1.id)
         self.assertTrue(last_row.date)
         self.assertEqual(last_row.user_id.id, self.env.user.id)
@@ -58,13 +47,26 @@ class TestTokenLocationAction(TransactionCase):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
+        action = self.token_l1.action_view_log()
+        last_row = self.env[action["res_model"]].search(action["domain"], limit=1)
+        self.assertEqual(last_row.action, "assign")
+        self.assertEqual(last_row.token_id.id, self.token_l1.id)
+        self.assertEqual(last_row.token_location_id.id, self.token_l1.location_ids.id)
+        self.assertEqual(last_row.location_id.id, self.location_1.id)
+        self.assertTrue(last_row.date)
+        self.assertEqual(last_row.user_id.id, self.env.user.id)
+        # Also, we check the display name in this point
+        self.assertIn(self.token_l1.name, last_row.display_name)
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_leave()
-        last_row = self.env["queue.token.location.action"].search([])[-1]
-        self.assertEqual(last_row.action , "leave")
+        action = self.token_l1.action_view_log()
+        last_row = self.env[action["res_model"]].search(
+            action["domain"], limit=1, order="id desc"
+        )
+        self.assertEqual(last_row.action, "leave")
         self.assertEqual(last_row.token_id.id, self.token_l1.id)
-        self.assertEqual(last_row.token_location.id, self.token_l1.location_ids.id)
+        self.assertEqual(last_row.token_location_id.id, self.token_l1.location_ids.id)
         self.assertEqual(last_row.location_id.id, self.location_1.id)
         self.assertTrue(last_row.date)
         self.assertEqual(last_row.user_id.id, self.env.user.id)
@@ -76,10 +78,13 @@ class TestTokenLocationAction(TransactionCase):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_cancel()
-        last_row = self.env["queue.token.location.action"].search([])[-1]
-        self.assertEqual(last_row.action , "cancel")
+        action = self.token_l1.action_view_log()
+        last_row = self.env[action["res_model"]].search(
+            action["domain"], limit=1, order="id desc"
+        )
+        self.assertEqual(last_row.action, "cancel")
         self.assertEqual(last_row.token_id.id, self.token_l1.id)
-        self.assertEqual(last_row.token_location.id, self.token_l1.location_ids.id)
+        self.assertEqual(last_row.token_location_id.id, self.token_l1.location_ids.id)
         self.assertEqual(last_row.location_id.id, self.location_1.id)
         self.assertTrue(last_row.date)
         self.assertEqual(last_row.user_id.id, self.env.user.id)
@@ -89,10 +94,13 @@ class TestTokenLocationAction(TransactionCase):
             location_id=self.location_1.id
         ).action_cancel()
         self.token_l1.location_ids.action_reopen_cancelled()
-        last_row = self.env["queue.token.location.action"].search([])[-1]
-        self.assertEqual(last_row.action , "reopen")
+        action = self.token_l1.action_view_log()
+        last_row = self.env[action["res_model"]].search(
+            action["domain"], limit=1, order="id desc"
+        )
+        self.assertEqual(last_row.action, "reopen")
         self.assertEqual(last_row.token_id.id, self.token_l1.id)
-        self.assertEqual(last_row.token_location.id, self.token_l1.location_ids.id)
+        self.assertEqual(last_row.token_location_id.id, self.token_l1.location_ids.id)
         self.assertFalse(last_row.location_id)
         self.assertTrue(last_row.date)
         self.assertEqual(last_row.user_id.id, self.env.user.id)
