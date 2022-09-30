@@ -226,7 +226,7 @@ class QueueTokenLocation(models.Model):
         return self.env["queue.token.location.action"].create(
             {
                 "token_id": self.token_id.id,
-                "token_location": self.id,
+                "token_location_id": self.id,
                 "location_id": location and location.id,
                 "user_id": self.env.user.id,
                 "date": fields.Datetime.now(),
