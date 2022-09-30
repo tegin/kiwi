@@ -138,12 +138,20 @@ class TestTokenLocation(SavepointCase):
         """
         self.assertFalse(self.token_g1.location_ids.location_id)
         self.assertEqual(self.token_g1.location_ids.state, "draft")
+        self.assertFalse(self.token_g1.location_ids.assign_date)
+        self.assertFalse(self.token_g1.location_ids.assign_user_id)
+        self.assertFalse(self.token_g1.location_ids.leave_date)
+        self.assertFalse(self.token_g1.location_ids.leave_user_id)
 
         self.token_g1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
         self.assertEqual(self.token_g1.location_ids.location_id, self.location_1)
         self.assertEqual(self.token_g1.location_ids.state, "in-progress")
+        self.assertTrue(self.token_g1.location_ids.assign_date)
+        self.assertTrue(self.token_g1.location_ids.assign_user_id)
+        self.assertFalse(self.token_g1.location_ids.leave_date)
+        self.assertFalse(self.token_g1.location_ids.leave_user_id)
         self.assertNotIn(
             self.token_g1.location_ids, self.location_1.token_location_done_ids
         )
@@ -151,6 +159,10 @@ class TestTokenLocation(SavepointCase):
             location_id=self.location_1.id
         ).action_leave()
         self.assertEqual(self.token_g1.location_ids.state, "done")
+        self.assertTrue(self.token_g1.location_ids.assign_date)
+        self.assertTrue(self.token_g1.location_ids.assign_user_id)
+        self.assertTrue(self.token_g1.location_ids.leave_date)
+        self.assertTrue(self.token_g1.location_ids.leave_user_id)
         # We need to refresh the location because depends are not related to token.location
         self.location_1.refresh()
         self.assertIn(
@@ -162,15 +174,27 @@ class TestTokenLocation(SavepointCase):
         We want to test the use case when we assign a token directly to a location.
         """
         self.assertEqual(self.token_l1.location_ids.state, "draft")
+        self.assertFalse(self.token_l1.location_ids.assign_date)
+        self.assertFalse(self.token_l1.location_ids.assign_user_id)
+        self.assertFalse(self.token_l1.location_ids.leave_date)
+        self.assertFalse(self.token_l1.location_ids.leave_user_id)
 
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
         self.assertEqual(self.token_l1.location_ids.state, "in-progress")
+        self.assertTrue(self.token_l1.location_ids.assign_date)
+        self.assertTrue(self.token_l1.location_ids.assign_user_id)
+        self.assertFalse(self.token_l1.location_ids.leave_date)
+        self.assertFalse(self.token_l1.location_ids.leave_user_id)
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_leave()
         self.assertEqual(self.token_l1.location_ids.state, "done")
+        self.assertTrue(self.token_l1.location_ids.assign_date)
+        self.assertTrue(self.token_l1.location_ids.assign_user_id)
+        self.assertTrue(self.token_l1.location_ids.leave_date)
+        self.assertTrue(self.token_l1.location_ids.leave_user_id)
 
     def test_assign_chained(self):
         """
@@ -358,6 +382,7 @@ class TestTokenLocation(SavepointCase):
             ).action_back_to_draft()
 
     def test_action_reopen_draft_cancelled(self):
+        """We also test that the token is in the cancelled tokens of the location"""
         self.assertNotIn(
             self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
         )
@@ -376,14 +401,22 @@ class TestTokenLocation(SavepointCase):
         )
 
     def test_action_reopen_assign_cancelled(self):
+        self.assertFalse(self.token_l2.location_ids.assign_date)
+        self.assertFalse(self.token_l2.location_ids.assign_user_id)
         self.token_l2.location_ids.with_context(
             location_id=self.location_2.id
         ).action_assign()
+        self.assertTrue(self.token_l2.location_ids.assign_date)
+        self.assertTrue(self.token_l2.location_ids.assign_user_id)
         self.token_l2.location_ids.action_cancel()
         self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
         self.assertEqual(self.token_l2.location_ids.state, "cancelled")
+        self.assertFalse(self.token_l2.location_ids.assign_date)
+        self.assertFalse(self.token_l2.location_ids.assign_user_id)
         self.token_l2.location_ids.action_reopen_cancelled()
         self.assertEqual(self.token_l2.location_ids.state, "draft")
+        self.assertFalse(self.token_l2.location_ids.assign_date)
+        self.assertFalse(self.token_l2.location_ids.assign_user_id)
 
     def test_action_reopen_assign_cancelled_processor_error(self):
         self.token_l2.location_ids.with_context(
