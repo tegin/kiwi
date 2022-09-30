@@ -32,11 +32,15 @@ class QueueTokenLocation(models.Model):
 
     active = fields.Boolean(default=True)
 
-    assign_date = fields.Datetime(readonly=True)
-    assign_user_id = fields.Many2one("res.users", readonly=True)
+    assign_date = fields.Datetime(store=True, compute="_compute_assign_data")
+    assign_user_id = fields.Many2one(
+        "res.users", store=True, compute="_compute_assign_data"
+    )
 
-    leave_date = fields.Datetime(readonly=True)
-    leave_user_id = fields.Many2one("res.users", readonly=True)
+    leave_date = fields.Datetime(store=True, compute="_compute_leave_data")
+    leave_user_id = fields.Many2one(
+        "res.users", store=True, compute="_compute_leave_data"
+    )
     cancel_date = fields.Datetime(store=True, compute="_compute_cancel_date")
     token_location_action_ids = fields.One2many(
         "queue.token.location.action", inverse_name="token_location_id"
@@ -47,14 +51,46 @@ class QueueTokenLocation(models.Model):
     )
     def _compute_cancel_date(self):
         for record in self:
-            if record.state != "cancelled":
+            if record.state == "cancelled":
+                actions = record.token_location_action_ids.filtered(
+                    lambda r: r.action == "cancel"
+                )
+                if actions:
+                    record.cancel_date = actions[-1].date
+            else:
                 record.cancel_date = False
+
+    @api.depends(
+        "state", "token_location_action_ids.action", "token_location_action_ids.date"
+    )
+    def _compute_leave_data(self):
+        for record in self:
+            if record.state != "done":
+                record.leave_date = False
+                record.leave_user_id = False
                 continue
             actions = record.token_location_action_ids.filtered(
-                lambda r: r.action == "cancel"
+                lambda r: r.action == "leave"
             )
             if actions:
-                record.cancel_date = actions[-1].date
+                record.leave_date = actions[-1].date
+                record.leave_user_id = actions[-1].user_id
+
+    @api.depends(
+        "state", "token_location_action_ids.action", "token_location_action_ids.date"
+    )
+    def _compute_assign_data(self):
+        for record in self:
+            if record.state not in ["in-progress", "done"]:
+                record.assign_date = False
+                record.assign_user_id = False
+                continue
+            actions = record.token_location_action_ids.filtered(
+                lambda r: r.action == "assign"
+            )
+            if actions:
+                record.assign_date = actions[-1].date
+                record.assign_user_id = actions[-1].user_id
 
     @api.depends("name", "state")
     def name_get(self):
@@ -124,8 +160,6 @@ class QueueTokenLocation(models.Model):
         return {
             "state": "in-progress",
             "location_id": location.id,
-            "assign_date": fields.Datetime.now(),
-            "assign_user_id": self.env.user.id,
         }
 
     def action_leave(self):
@@ -148,8 +182,6 @@ class QueueTokenLocation(models.Model):
     def _action_leave_vals(self, location):
         return {
             "state": "done",
-            "leave_date": fields.Datetime.now(),
-            "leave_user_id": self.env.user.id,
         }
 
     def action_cancel(self):
