@@ -78,12 +78,27 @@
         <field name="context">{}</field>
     </record>
 
+    <record model="ir.actions.act_window" id="queue_display_fullscreen_act_window">
+        <field name="name">Display</field> <!-- TODO -->
+        <field name="res_model">queue.display</field>
+        <field name="view_mode">form</field>
+        <field name="target">fullscreen</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_display_fullscreen_form_act_window"
+    >
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="queue_display_form_queue_display_view" />
+        <field name="act_window_id" ref="queue_display_fullscreen_act_window" />
+    </record>
+
     <record model="ir.ui.menu" id="queue_display_menu">
         <field name="name">Displays</field>
-        <field
-            name="parent_id"
-            ref="queue_management.queue_config_root_menu"
-        /> <!-- TODO -->
+        <field name="parent_id" ref="queue_management.queue_config_root_menu" />
         <field name="action" ref="queue_display_act_window" />
         <field name="sequence" eval="90" /> <!-- TODO -->
     </record>
