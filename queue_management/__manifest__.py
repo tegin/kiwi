@@ -16,6 +16,7 @@
         "views/menu.xml",
         "views/queue_token_location.xml",
         "data/ir_sequence_data.xml",
+        "data/ir_cron.xml",
         "views/queue_location_group.xml",
         "views/queue_location.xml",
         "security/ir.model.access.csv",
