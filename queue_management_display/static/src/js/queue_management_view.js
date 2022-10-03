@@ -22,6 +22,7 @@ odoo.define("queue_management.QueueDisplayView", function(require) {
         }),
         multi_record: false,
         searchable: false,
+        withControlPanel: false,
         init: function() {
             this._super.apply(this, arguments);
             this.controllerParams.mode = "readonly";
