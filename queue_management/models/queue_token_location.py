@@ -92,22 +92,23 @@ class QueueTokenLocation(models.Model):
                 record.assign_date = actions[-1].date
                 record.assign_user_id = actions[-1].user_id
 
-    @api.depends("name", "state")
+    @api.depends("token_id", "group_id", "location_id")
+    def _compute_display_name(self):
+        return super()._compute_display_name()
+
     def name_get(self):
         result = []
         for record in self:
-            if record.location_id:
-                result.append(
-                    (
-                        record.id,
-                        "%s-%s" % (record.token_id.name, record.location_id.name),
-                    )
+            result.append(
+                (
+                    record.id,
+                    "%s-%s"
+                    % (
+                        record.token_id.name,
+                        record.group_id.name or record.location_id.name,
+                    ),
                 )
-            elif record.group_id:
-                result.append(
-                    (record.id, "%s-%s" % (record.token_id.name, record.group_id.name))
-                )
-
+            )
         return result
 
     @api.constrains("state", "token_id")

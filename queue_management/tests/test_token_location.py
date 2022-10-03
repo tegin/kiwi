@@ -169,6 +169,12 @@ class TestTokenLocation(SavepointCase):
             self.token_g1, self.location_1.token_location_done_ids.mapped("token_id")
         )
 
+    def test_location_display(self):
+        self.assertIn(self.token_g1.name, self.token_g1.location_ids.display_name)
+        self.assertIn(self.group_1.name, self.token_g1.location_ids.display_name)
+        self.assertIn(self.token_l1.name, self.token_l1.location_ids.display_name)
+        self.assertIn(self.location_1.name, self.token_l1.location_ids.display_name)
+
     def test_location(self):
         """
         We want to test the use case when we assign a token directly to a location.
