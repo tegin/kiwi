@@ -55,16 +55,10 @@ class QueueDisplay(models.Model):
 
     def open_display(self):
         self.ensure_one()
-        action = self.get_formview_action()
-        action["name"] = self.display_name
-        action["views"] = [
-            (
-                self.env.ref(
-                    "queue_management_display.queue_display_form_queue_display_view"
-                ).id,
-                "form",
-            )
-        ]
+        action = self.env.ref(
+            "queue_management_display.queue_display_fullscreen_act_window"
+        ).read()[0]
+        action["res_id"] = self.id
         return action
 
     @api.depends()
