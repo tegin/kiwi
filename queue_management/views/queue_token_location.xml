@@ -120,7 +120,7 @@
                     name="action_cancel"
                     type="object"
                     string="Cancel"
-                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
+                    attrs="{'invisible': [('state', '=', 'in-progress')]}"
                     groups="queue_management.group_queue_processor"
                 />
                 <button
