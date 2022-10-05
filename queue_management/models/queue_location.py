@@ -125,3 +125,7 @@ class QueueLocation(models.Model):
                 record.state = "warning"
             else:
                 record.state = "waiting"
+
+    def action_reload(self):
+        self.ensure_one()
+        return {"type": "ir.actions.act_view_reload"}
