@@ -8,23 +8,33 @@
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
             <form create="0" edit="0" delete="0">
-                <header>
-                    <!-- TODO -->
-                </header>
+                <header />
                 <sheet>
-                    <!-- TODO -->
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
+                    <div
+                        name="button_box"
+                        class="oe_button_box"
+                        attrs="{'invisible': [('active', '=', False)]}"
+                    >
+                        <button
+                            name="action_reload"
+                            type="object"
+                            string="Reload"
+                            icon="fa-refresh"
+                            invisible="0"
+                        />
+                    </div>
                     <group>
                         <field name="name" />
                         <field name="group_ids" widget="many2many_tags" />
                         <field name="state" />
                         <field name="active" invisible="1" />
-                        <widget
-                            name="web_ribbon"
-                            title="Archived"
-                            bg_color="bg-danger"
-                            attrs="{'invisible': [('active', '=', True)]}"
-                        />
-                    </group>
+                </group>
                     <notebook>
                         <page name="token" string="Work List">
                             <field
@@ -62,22 +72,34 @@
         <field name="priority">90</field>
         <field name="arch" type="xml">
             <form>
-                <header>
-                    <!-- TODO -->
-                </header>
+                <header />
                 <sheet>
-                    <!-- TODO -->
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
+                    <div
+                        name="button_box"
+                        class="oe_button_box"
+                        attrs="{'invisible': [('active', '=', False)]}"
+                    >
+                        <button
+                            name="action_reload"
+                            type="object"
+                            string="Reload"
+                            icon="fa-refresh"
+                            invisible="0"
+                        />
+                    </div>
                     <group>
                         <field name="name" />
                         <field name="group_ids" widget="many2many_tags" />
                         <field name="active" invisible="1" />
-                        <widget
-                            name="web_ribbon"
-                            title="Archived"
-                            bg_color="bg-danger"
-                            attrs="{'invisible': [('active', '=', True)]}"
-                        />
+
                     </group>
+
                     <notebook>
                         <page name="token" string="Work List">
                             <field
@@ -110,6 +132,7 @@
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
             <search>
+
                 <field name="name" />
                 <separator />
                 <filter
@@ -245,6 +268,7 @@
         model="ir.actions.act_window.view"
         id="queue_location_config_act_window_form_view"
     >
+
         <field name="view_mode">form</field>
         <field name="view_id" ref="queue_location_config_form_view" />
         <field name="act_window_id" ref="queue_location_config_act_window" />
