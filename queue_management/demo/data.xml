@@ -3,10 +3,80 @@
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo noupdate="1">
 
-    <!-- TODO
-    <record model="queue.location.groups" id="queue_location_groups_demo_1">
-       <field name="name">...</field>
+    <record id="queue_location_groups_demo_1" model="queue.location.group">
+       <field name="name">G1</field>
     </record>
-    -->
+    <record id="queue_location_groups_demo_2" model="queue.location.group">
+        <field name="name">G2</field>
+     </record>
+
+    <record id="queue_location_demo_1" model="queue.location">
+        <field name="name">L1</field>
+        <field
+            name="group_ids"
+            eval="[(4,queue_location_groups_demo_1),(4,queue_location_groups_demo_2)]"
+        />
+    </record>
+
+    <record id="queue_location_demo_2" model="queue.location">
+        <field name="name">L2</field>
+        <field name="group_ids" eval="[(4,queue_location_groups_demo_2)]" />
+    </record>
+
+    <record id="queue_location_demo_3" model="queue.location">
+        <field name="name">L3</field>
+        <field name="group_ids" eval="[(4,queue_location_groups_demo_1)]" />
+    </record>
+
+    <record id="queue_location_demo_4" model="queue.location">
+        <field name="name">L4</field>
+     </record>
+
+     <record id="queue_token_demo_1" model="queue.token">
+    </record>
+
+    <record id="queue_token_demo_1_location_1" model="queue.token.location">
+       <field name="location_id" ref="queue_location_demo_1" />
+       <field name="token_id" ref="queue_token_demo_1" />
+   </record>
+   <record id="queue_token_demo_1_group_1" model="queue.token.location">
+      <field name="group_id" ref="queue_location_groups_demo_1" />
+      <field name="token_id" ref="queue_token_demo_1" />
+  </record>
+
+
+
+    <record id="queue_token_demo_2" model="queue.token">
+    </record>
+    <record id="queue_token_demo_2_location_2" model="queue.token.location">
+       <field name="location_id" ref="queue_location_demo_2" />
+       <field name="token_id" ref="queue_token_demo_2" />
+   </record>
+   <record id="queue_token_demo_2_group_2" model="queue.token.location">
+      <field name="group_id" ref="queue_location_groups_demo_2" />
+      <field name="token_id" ref="queue_token_demo_2" />
+   </record>
+
+    <record id="queue_token_demo_3" model="queue.token">
+    </record>
+    <record id="queue_token_demo_3_location_3" model="queue.token.location">
+        <field name="location_id" ref="queue_location_demo_3" />
+        <field name="token_id" ref="queue_token_demo_3" />
+    </record>
+    <record id="queue_token_demo_3_location_4" model="queue.token.location">
+        <field name="location_id" ref="queue_location_demo_4" />
+        <field name="token_id" ref="queue_token_demo_3" />
+    </record>
+
+    <record id="queue_token_demo_4" model="queue.token">
+     </record>
+     <record id="queue_token_demo_4_location_1" model="queue.token.location">
+        <field name="location_id" ref="queue_location_demo_1" />
+        <field name="token_id" ref="queue_token_demo_4" />
+    </record>
+    <record id="queue_token_demo_4_location_4" model="queue.token.location">
+        <field name="location_id" ref="queue_location_demo_4" />
+        <field name="token_id" ref="queue_token_demo_4" />
+    </record>
 
 </odoo>
