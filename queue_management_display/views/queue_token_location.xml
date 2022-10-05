@@ -46,4 +46,53 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="queue_token_location_force_call_form">
+        <field
+            name="name"
+        >queue.token.location.form (in queue_management_display)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="token_id" readonly="1" />
+                        <field name="expected_location_id" readonly="1" />
+                        <field name="last_call" readonly="1" />
+                    </group>
+                </sheet>
+            <footer>
+                <button
+                        string='Force Call'
+                        name="action_call"
+                        type="object"
+                        class="btn-primary"
+                        context="{'location_id': context.get('location_id'), 'ignore_expected_location': 1}"
+                    />
+                <button string="Cancel" class="btn-secondary" special="cancel" />
+            </footer>
+            </form>
+        </field>
+    </record>
+
+    <record
+        model="ir.actions.act_window"
+        id="queue_token_location_force_call_act_window"
+    >
+        <field name="name">Display</field> <!-- TODO -->
+        <field name="res_model">queue.token.location</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_token_location_force_call_act_window_view"
+    >
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="queue_token_location_force_call_form" />
+        <field name="act_window_id" ref="queue_token_location_force_call_act_window" />
+    </record>
+
 </odoo>
