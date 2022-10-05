@@ -3,7 +3,7 @@
     <record id="base.user_demo" model="res.users">
         <field
             name="groups_id"
-            eval="[(4,ref('queue_management.group_queue_admin'))]"
+            eval="[(4,ref('queue_management.group_queue_planner'))]"
         />
     </record>
 </odoo>
