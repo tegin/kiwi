@@ -40,9 +40,10 @@ class QueueTokenLocation(models.Model):
             previous_call_token.write({"expected_location_id": False})
 
         self.write(self._call_action_vals(location))
-        self.env["bus.bus"].sendmany(self._get_channel_notifications(location))
+        action = self._add_action_log("call", location)
+        self.env["bus.bus"].sendmany(self._get_channel_notifications(location, action))
 
-    def _get_channel_notifications(self, location):
+    def _get_channel_notifications(self, location, action):
         notifications = []
         for display in location.display_ids:
             notifications.append(
@@ -51,7 +52,7 @@ class QueueTokenLocation(models.Model):
                     {
                         "id": self.id,
                         "token": self.token_id.name,
-                        "last_call": fields.Datetime.to_string(self.last_call),
+                        "last_call": fields.Datetime.to_string(action.date),
                         "location": location.name,
                     },
                 )

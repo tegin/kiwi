@@ -64,28 +64,30 @@ class QueueDisplay(models.Model):
     @api.depends()
     def _compute_items(self):
         for record in self:
-            record.items = {
-                "tokens": [
-                    {
-                        "id": token.id,
-                        "token": token.token_id.name,
-                        "location": token.expected_location_id.name,
-                        "last_call": fields.Datetime.to_string(token.last_call),
-                    }
-                    for token in record._get_display_tokens()
-                ]
-            }
+            record.items = {"tokens": record._get_display_tokens()}
 
     def _get_display_tokens(self):
-        return self.env["queue.token.location"].search(
+        actions = self.env["queue.token.location.action"].search(
             [
-                ("expected_location_id", "in", self.location_ids.ids),
-                (
-                    "last_call",
-                    ">",
-                    fields.Datetime.now() + timedelta(hours=-self.max_time),
-                ),
+                ("location_id", "in", self.location_ids.ids),
+                ("date", ">", fields.Datetime.now() + timedelta(hours=-self.max_time),),
             ],
-            limit=self.show_items,
-            order="last_call desc",
+            order="date desc",
         )
+        token_locations = self.env["queue.token.location"]
+        final_actions = self.env["queue.token.location.action"]
+        for action in actions:
+            if action.token_location_id not in token_locations:
+                token_locations |= action.token_location_id
+                final_actions |= action
+                if len(token_locations) >= self.show_items:
+                    break
+        return [
+            {
+                "id": action.token_location_id.id,
+                "token": action.token_id.name,
+                "location": action.location_id.name,
+                "last_call": fields.Datetime.to_string(action.date),
+            }
+            for action in final_actions
+        ]
