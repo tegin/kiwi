@@ -24,9 +24,7 @@ class QueueLocation(models.Model):
     current_token_location_id = fields.Many2one(
         "queue.token.location", compute="_compute_current_token"
     )
-    current_token_id = fields.Many2one(
-        "queue.token", related="current_token_location_id.token_id"
-    )
+    current_token_id = fields.Many2one("queue.token", compute="_compute_current_token")
     token_location_done_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location_done"
     )
@@ -46,6 +44,7 @@ class QueueLocation(models.Model):
                 [("location_id", "=", record.id), ("state", "=", "in-progress")],
                 limit=1,
             )
+            record.current_token_id = record.current_token_location_id.token_id
 
     @api.depends()
     def _compute_token_location_count(self):
