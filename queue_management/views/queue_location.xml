@@ -154,8 +154,8 @@
         >queue.location.kanban Configuration (in queue_management)</field>
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_dashboard" create="0">
-                <field name="token_location_count" />
+            <kanban class="o_kanban_dashboard">
+                <field name="token_location_count" create="0" />
                 <field name="state" />
                 <templates>
                     <t t-name="kanban-box">
