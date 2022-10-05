@@ -14,9 +14,15 @@
         />
         <field name="arch" type="xml">
             <button name="action_assign" position='before'>
-                <button name="action_call" type="object" string="Call" />
+                <button
+                    name="action_call"
+                    type="object"
+                    string="Call"
+                    attrs="{'invisible': [('state', '!=', 'draft')]}"
+                    groups="queue_management.group_queue_processor"
+                />
             </button>
-            <button name="action_leave" position='after'>
+            <button name="action_back_to_draft" position='after'>
                 <field name='expected_location_id' />
             </button>
         </field>
