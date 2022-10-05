@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record model="ir.ui.view" id="queue_token_location_reporting_pivot_view">
+        <field
+            name="name"
+        >queue.token.location.reporting.pivot (in queue_management)</field>
+        <field name="model">queue.token.location.reporting</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="location_id" type="row" />
+                <field name="time_to_assign" type="measure" />
+                <field name="time_to_assign_average" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_location_reporting_search_view">
+        <field
+            name="name"
+        >queue.token.location.reporting.search (in queue_management)</field>
+        <field name="model">queue.token.location.reporting</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="location_id" />
+                <separator />
+                <filter
+                    name="state_pending"
+                    string="Pending"
+                    domain="[('state', '=', 'draft')]"
+                />
+                <filter
+                    name="state_progress"
+                    string="In progress"
+                    domain="[('state', '=', 'in-progress')]"
+                />
+                <filter
+                    name="state_done"
+                    string="Done"
+                    domain="[('state', '=', 'done')]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_location_reporting_graph_view">
+        <field
+            name="name"
+        >queue.token.location.reporting.tree (in queue_management)</field>
+        <field name="model">queue.token.location.reporting</field>
+        <field name="arch" type="xml">
+            <graph type="line">
+                <field name="create_date" />
+                <field name="time_to_assign_average" type="measure" />
+            </graph>
+        </field>
+    </record>
+
+    <record
+        model="ir.actions.act_window"
+        id="queue_token_location_reporting_act_window"
+    >
+        <field name="name">Queue Token Location Reporting</field> <!-- TODO -->
+        <field name="res_model">queue.token.location.reporting</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record model="ir.ui.menu" id="queue_token_location_reporting_menu">
+        <field name="name">Report</field>
+        <field name="parent_id" ref="queue_root_menu" /> <!-- TODO -->
+        <field name="action" ref="queue_token_location_reporting_act_window" />
+        <field name="sequence" eval="16" /> <!-- TODO -->
+    </record>
+
+</odoo>
