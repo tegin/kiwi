@@ -22,12 +22,8 @@
         "security/ir.model.access.csv",
         "views/queue_token.xml",
         "views/queue_token_location_action.xml",
+        "reports/queue_token_location_reporting.xml",
         "templates/assets.xml",
     ],
-    "demo": [
-        "demo/security.xml",
-        "demo/queue_location_groups.xml",
-        "demo/queue_location.xml",
-        "demo/queue_token.xml",
-    ],
+    "demo": ["demo/security.xml", "demo/data.xml"],
 }
