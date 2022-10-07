@@ -17,7 +17,7 @@ class QueueTokenLocation(models.Model):
 
     group_id = fields.Many2one("queue.location.group")
     location_id = fields.Many2one("queue.location")
-    token_id = fields.Many2one("queue.token", required=True)
+    token_id = fields.Many2one("queue.token", required=True, auto_join=True)
     state = fields.Selection(
         [
             ("draft", "Pending"),

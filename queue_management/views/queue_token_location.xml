@@ -65,24 +65,7 @@
                 <field name="location_id" />
                 <field name="leave_date" />
                 <field name="state" invisible="0" />
-                <button
-                    name="action_assign"
-                    type="object"
-                    string="Assign"
-                    invisible="1"
-                />
-                <button
-                    name="action_leave"
-                    type="object"
-                    string="Leave"
-                    invisible="1"
-                />
-                <button
-                    name="action_cancel"
-                    type="object"
-                    string="Cancel"
-                    invisible="1"
-                />
+
 
             </tree>
         </field>
@@ -101,7 +84,6 @@
                 <field name="token_id" />
                 <field name="group_id" />
                 <field name="location_id" />
-                <field name="leave_date" />
                 <field name="state" invisible="1" />
                 <button
                     name="action_assign"
