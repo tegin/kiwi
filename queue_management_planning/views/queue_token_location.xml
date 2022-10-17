@@ -68,4 +68,64 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="queue_token_location_calendar_view">
+        <field
+            name="name"
+        >queue.token.location.tree (in queue_management_planning)</field>
+        <field name="model">queue.token.location</field>
+        <field name="arch" type="xml">
+            <calendar_list
+                js_class="queue_planning_calendar"
+                date_start="planning_date"
+                color="state"
+            >
+                <field name="display_name" />
+                <field name="state" />
+                <field name="group_id" />
+                <field name="arrival_date" />
+                <field name="expected_date" />
+                <field name="state" invisible="1" />
+                <button
+                    name="action_assign"
+                    type="object"
+                    string="Assign"
+                    attrs="{'invisible': [('state', '!=', 'draft')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
+                    name="action_leave"
+                    type="object"
+                    string="Leave"
+                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
+                    name="action_cancel"
+                    type="object"
+                    string="Cancel"
+                    attrs="{'invisible': [('state', '=', 'in-progress')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+                <button
+                    name="action_back_to_draft"
+                    type="object"
+                    string="Back to draft"
+                    attrs="{'invisible': [('state', '!=', 'in-progress')]}"
+                    groups="queue_management.group_queue_processor"
+                />
+            </calendar_list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_token_location_calendar_act_window">
+        <field name="name">Token Locations</field>
+        <field name="res_model">queue.token.location</field>
+        <field name="view_mode">calendar_list</field>
+        <field
+            name="domain"
+        >["|", ("location_id", "=", active_id), ("group_id.location_ids", "in", active_id)]</field>
+        <field name="context">{}</field>
+    </record>
+
+
 </odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template
+        id="assets_backend"
+        name="Backend Assets (used in queue_management_planning)"
+        inherit_id="web.assets_backend"
+    >
+        <xpath expr="." position="inside">
+            <script
+                type="text/javascript"
+                src="/queue_management_planning/static/src/js/queue_renderer.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_planning/static/src/js/queue_model.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_planning/static/src/js/queue_controller.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_planning/static/src/js/queue_view.js"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/queue_management_planning/static/src/scss/queue.scss"
+            />
+        </xpath>
+    </template>
+</odoo>

@@ -27,7 +27,6 @@
                     attrs="{'invisible': [('arrival_date', '=', False)]}"
                 />
             </button>
-
         </field>
     </record>
 </odoo>
