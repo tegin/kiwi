@@ -21,5 +21,4 @@ class QueueToken(models.Model):
         self.write({"arrival_date": fields.Datetime.now()})
 
     def _uncheck_token(self):
-        self.write({"arrival_date":False})
-
+        self.write({"arrival_date": False})
