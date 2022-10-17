@@ -139,3 +139,6 @@ class QueueLocation(models.Model):
     def action_reload(self):
         self.ensure_one()
         return {"type": "ir.actions.act_view_reload"}
+
+    def access_location(self):
+        return self.get_formview_action()
