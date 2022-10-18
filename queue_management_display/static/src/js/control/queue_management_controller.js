@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayController", function(require) {
+odoo.define("queue_management.QueueDisplayNotificationController", function(require) {
     "use strict";
 
     var BasicController = require("web.BasicController");
@@ -8,7 +8,7 @@ odoo.define("queue_management.QueueDisplayController", function(require) {
 
     // Var clockTemp = null;
 
-    var QueueDisplayController = BasicController.extend({
+    var QueueDisplayNotificationController = BasicController.extend({
         custom_events: _.extend({}, BasicController.prototype.custom_events, {
             notification_received: "_onNotificationReceived",
             render_token: "_onRenderToken",
@@ -36,12 +36,6 @@ odoo.define("queue_management.QueueDisplayController", function(require) {
             var shiny_max_time =
                 Date.now() / 1000 - this.initialState.data.shiny_time * 3600;
             _.each(list.slice(0, 10), function(token) {
-                console.log(
-                    token[1].last_call > shiny_max_time,
-                    token[1].last_call,
-                    shiny_max_time,
-                    Date.now()
-                );
                 var $row = $(
                     qweb.render("queue_management_display.queue_display_token_shiny", {
                         token: token[1].token,
@@ -67,5 +61,5 @@ odoo.define("queue_management.QueueDisplayController", function(require) {
             this._super(state);
         },
     });
-    return QueueDisplayController;
+    return QueueDisplayNotificationController;
 });

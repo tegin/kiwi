@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayRenderer", function(require) {
+odoo.define("queue_management.QueueDisplayControlRenderer", function(require) {
     "use strict";
 
     var BasicRenderer = require("web.BasicRenderer");
@@ -7,7 +7,7 @@ odoo.define("queue_management.QueueDisplayRenderer", function(require) {
     var qweb = core.qweb;
     var Clock = require("queue_management.Clock");
 
-    var QueueDisplayRenderer = BasicRenderer.extend({
+    var QueueDisplayControlRenderer = BasicRenderer.extend({
         className: "o_queue_management_display_view",
         _renderView: function() {
             this.channel = "queue.display_" + this.state.res_id;
@@ -20,8 +20,6 @@ odoo.define("queue_management.QueueDisplayRenderer", function(require) {
             template += this.state.data.qweb;
             template += "</t></templates>";
             qweb.add_template(template);
-
-            console.log(this.template_name);
             this.$el.html(
                 $(
                     qweb.render(this.template_name, {
@@ -59,5 +57,5 @@ odoo.define("queue_management.QueueDisplayRenderer", function(require) {
         },
     });
 
-    return QueueDisplayRenderer;
+    return QueueDisplayControlRenderer;
 });
