@@ -9,15 +9,11 @@
         <xpath expr="." position="inside">
             <script
                 type="text/javascript"
-                src="/queue_management_planning/static/src/js/queue_renderer.js"
-            />
-            <script
-                type="text/javascript"
-                src="/queue_management_planning/static/src/js/queue_model.js"
-            />
-            <script
-                type="text/javascript"
                 src="/queue_management_planning/static/src/js/queue_controller.js"
+            />
+            <script
+                type="text/javascript"
+                src="/queue_management_planning/static/src/js/queue_search_panel.js"
             />
             <script
                 type="text/javascript"

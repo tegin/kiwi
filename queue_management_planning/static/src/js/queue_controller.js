@@ -1,19 +1,20 @@
 odoo.define("queue_management_planning.QueuePlanningController", function(require) {
     "use strict";
 
-    var CalendarListController = require("web_view_calendar_list.CalendarListController");
+    var ListController = require("web.ListController");
 
-    var QueuePlannningController = CalendarListController.extend({
-        custom_events: _.extend({}, CalendarListController.prototype.custom_events, {
-            button_clicked: "_onButtonClicked",
+    var QueuePlannningController = ListController.extend({
+        custom_events: _.extend({}, ListController.prototype.custom_events, {
+            changeDate: "_onChangeDate",
         }),
-        _onOpenEvent: function(event) {
-            console.log(event);
-        },
-        _onButtonClicked: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this._callButtonAction(ev.data.attrs, ev.data.record);
+        _onChangeDate: function(event) {
+            this._searchPanel.setDate(event.data.date);
+            // With the parameters on reload, we are able to update the domain using the new date
+            this.reload({
+                controllerState: {
+                    spState: {},
+                },
+            });
         },
     });
 

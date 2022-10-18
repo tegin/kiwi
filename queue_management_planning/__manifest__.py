@@ -10,7 +10,6 @@
     "author": "CreuBlanca,Odoo Community Association (OCA)",
     "website": "https://github.com/tegin/kiwi",
     "depends": ["queue_management", "web_view_calendar_list"],
-    "qweb": ["static/src/xml/queue.xml"],
     "data": [
         "views/queue_token.xml",
         "views/queue_token_location.xml",

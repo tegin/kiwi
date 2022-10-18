@@ -1,27 +1,30 @@
 odoo.define("queue_management_planning.QueuePlanningView", function(require) {
     "use strict";
 
-    var CalendarListView = require("web_view_calendar_list.CalendarListView");
+    var ListView = require("web.ListView");
     var core = require("web.core");
-    var QueuePlannningRenderer = require("queue_management_planning.QueuePlannningRenderer");
-    var QueuePlanningModel = require("queue_management_planning.QueuePlanningModel");
+    var QueuePlanningSearchPanel = require("queue_management_planning.QueuePlanningSearchPanel");
     var QueuePlanningController = require("queue_management_planning.QueuePlanningController");
     var view_registry = require("web.view_registry");
 
     var _lt = core._lt;
 
-    var QueuePlanningView = CalendarListView.extend({
-        display_name: _lt("Calendar List"),
+    var QueuePlanningView = ListView.extend({
+        display_name: _lt("Queue Planning"),
         icon: "fa-calendar-check-o",
-        viewType: "queue_planning_calendar",
-        config: _.extend(CalendarListView.prototype.config, {
-            Renderer: QueuePlannningRenderer,
-            Model: QueuePlanningModel,
+        viewType: "queue_planning",
+        config: _.extend(ListView.prototype.config, {
+            SearchPanel: QueuePlanningSearchPanel,
             Controller: QueuePlanningController,
         }),
+        init: function() {
+            this._super.apply(this, arguments);
+            // We need this in order to make the system work as a list
+            this.fieldsInfo.list = this.fieldsView.fieldsInfo[this.viewType];
+        },
     });
 
-    view_registry.add("queue_planning_calendar", QueuePlanningView);
+    view_registry.add("queue_planning", QueuePlanningView);
 
     return QueuePlanningView;
 });
