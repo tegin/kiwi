@@ -11,27 +11,6 @@ class QueueTokenLocation(models.Model):
     last_call = fields.Datetime(readonly=True)
     expected_location_id = fields.Many2one("queue.location")
 
-    def _check_token_state_for_calling(self):
-        for record in self:
-            if record.state != "in-progress":
-                continue
-            if self.search(
-                [
-                    ("id", "!=", record.id),
-                    ("token_id", "=", record.token_id.id),
-                    ("state", "=", "in-progress"),
-                ],
-                limit=1,
-            ):
-                raise ValidationError(
-                    _(
-                        "Token %s already has already been assigned by the location\
-                        %s. Close it first before calling."
-                    )
-                    % record.token_id.name,
-                    record.location_id.name,
-                )
-
     def action_call(self):
         self.ensure_one()
         if self.expected_location_id and not self.env.context.get(
@@ -90,22 +69,25 @@ class QueueTokenLocation(models.Model):
                 )
         self.write(self._call_action_vals(location))
         action = self._add_action_log("call", location)
-        self.env["bus.bus"].sendmany(self._get_channel_notifications(location, action))
+        self.env["bus.bus"].sendmany(
+            self._get_channel_call_notifications(location, action)
+        )
 
-    def _get_channel_notifications(self, location, action):
+    def _get_channel_call_notifications(self, location, action):
         notifications = []
         for display in location.display_ids:
-            notifications.append(
-                (
-                    ("%s_%s" % (display._name, display.id)),
-                    {
-                        "id": self.id,
-                        "token": self.token_id.name,
-                        "last_call": fields.Datetime.to_string(action.date),
-                        "location": location.name,
-                    },
+            if display.kind == "notification":
+                notifications.append(
+                    (
+                        ("%s_%s" % (display._name, display.id)),
+                        {
+                            "id": self.id,
+                            "token": self.token_id.name,
+                            "last_call": fields.Datetime.to_string(action.date),
+                            "location": location.name,
+                        },
+                    )
                 )
-            )
         return notifications
 
     def _call_action_vals(self, location):
