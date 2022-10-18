@@ -1,23 +1,23 @@
-odoo.define("queue_management.QueueDisplayView", function(require) {
+odoo.define("queue_management.QueueDisplayControlView", function(require) {
     "use strict";
 
     var BasicView = require("web.BasicView");
-    var QueueDisplayController = require("queue_management.QueueDisplayController");
+    var QueueDisplayControlController = require("queue_management.QueueDisplayControlController");
     // Var DashboardModel = require("kpi_dashboard.DashboardModel");
-    var QueueDisplayRenderer = require("queue_management.QueueDisplayRenderer");
+    var QueueDisplayControlRenderer = require("queue_management.QueueDisplayControlRenderer");
     var view_registry = require("web.view_registry");
     var core = require("web.core");
 
     var _lt = core._lt;
 
-    var QueueDisplayView = BasicView.extend({
+    var QueueDisplayControlView = BasicView.extend({
         accesskey: "p",
         display_name: _lt("Display"),
         icon: "fa-tachometer",
-        viewType: "queue_display",
+        viewType: "queue_display_control",
         config: _.extend({}, BasicView.prototype.config, {
-            Controller: QueueDisplayController,
-            Renderer: QueueDisplayRenderer,
+            Controller: QueueDisplayControlController,
+            Renderer: QueueDisplayControlRenderer,
             // Model: DashboardModel,
         }),
         multi_record: false,
@@ -33,7 +33,7 @@ odoo.define("queue_management.QueueDisplayView", function(require) {
         },
     });
 
-    view_registry.add("queue_display", QueueDisplayView);
+    view_registry.add("queue_display_control", QueueDisplayControlView);
 
-    return QueueDisplayView;
+    return QueueDisplayControlView;
 });

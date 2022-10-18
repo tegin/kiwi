@@ -18,45 +18,55 @@ class QueueDisplay(models.Model):
     max_time = fields.Float(default=24)  # Time maximum
     shiny_time = fields.Float(default=0.05)  # By default, 3 minutes
     items = fields.Serialized(compute="_compute_items")
+    kind = fields.Selection(
+        [("notification", "Notification screen"), ("control", "Control Screen")],
+        default="notification",
+        required=True,
+    )
     qweb = fields.Text(default=lambda r: r._default_qweb())
     css = fields.Text()
 
     def _default_qweb(self):
         return """
-        <div class="row o_queue_management_display_header">
-            <div class="col-2 queue_logo">
-                <img t-attf-src="/logo.png?company=#{company_id}" t-attf-alt="#{company}" />
-            </div>
-            <div class="col-8 o_queue_management_display_header_title">
-                <h1 t-esc="data.description" />
-            </div>
-            <div class="col-2 o_queue_management_display_header_datetime">
-                <div class="o_queue_management_display_header_clock" />
-            </div>
-        </div>
-        <div class="row o_queue_management_display_body">
-            <div class="col-4 o_queue_management_display_body_content">
-                <div class="o_queue_management_display_body_content_header row">
-                    <t t-call="queue_management_display.queue_display_token">
-                        <t t-set="token">Token</t>
-                        <t t-set="location">Location</t>
-                    </t>
-
+            <div class="row o_queue_management_display_header">
+                <div class="col-2 queue_logo">
+                    <img t-attf-src="/logo.png?company=#{company_id}" t-attf-alt="#{company}" />
                 </div>
-                <div class="o_queue_management_display_body_content_body row" />
+                <div class="col-8 o_queue_management_display_header_title">
+                    <h1 t-esc="data.description" />
+                </div>
+                <div class="col-2 o_queue_management_display_header_datetime">
+                    <div class="o_queue_management_display_header_clock" />
+                </div>
             </div>
-            <div class="col-8  o_queue_management_display_advertising">
-                <!-- TODO: Add your video here -->
+            <div class="row o_queue_management_display_body">
+                <div class="col-4 o_queue_management_display_body_content">
+                    <div class="o_queue_management_display_body_content_header row">
+                        <t t-call="queue_management_display.queue_display_token">
+                            <t t-set="token">Token</t>
+                            <t t-set="location">Location</t>
+                        </t>
+
+                    </div>
+                    <div class="o_queue_management_display_body_content_body row" />
+                </div>
+                <div class="col-8  o_queue_management_display_advertising">
+                    <!-- TODO: Add your video here -->
+                </div>
             </div>
-        </div>
-        <div class="row o_queue_management_display_footer">
-            <!-- TODO: Add Your Social Media data here -->
-        </div>"""
+            <div class="row o_queue_management_display_footer">
+                <!-- TODO: Add Your Social Media data here -->
+            </div>
+        """
 
     def open_display(self):
+        """
+        Open XML id depending on wich type os self.kind you have choosed.
+        """
         self.ensure_one()
         action = self.env.ref(
-            "queue_management_display.queue_display_fullscreen_act_window"
+            "queue_management_display.queue_display_fullscreen_%s_act_window"
+            % self.kind
         ).read()[0]
         action["res_id"] = self.id
         return action
