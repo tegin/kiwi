@@ -80,7 +80,11 @@ class QueueDisplay(models.Model):
         actions = self.env["queue.token.location.action"].search(
             [
                 ("location_id", "in", self.location_ids.ids),
-                ("date", ">", fields.Datetime.now() + timedelta(hours=-self.max_time),),
+                (
+                    "date",
+                    ">",
+                    fields.Datetime.now() + timedelta(hours=-self.max_time),
+                ),
             ],
             order="date desc",
         )
