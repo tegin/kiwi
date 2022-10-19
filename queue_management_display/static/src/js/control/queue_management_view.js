@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayNotificationView", function(require) {
+odoo.define("queue_management.QueueDisplayNotificationView", function (require) {
     "use strict";
 
     var BasicView = require("web.BasicView");
@@ -23,7 +23,7 @@ odoo.define("queue_management.QueueDisplayNotificationView", function(require) {
         multi_record: false,
         searchable: false,
         withControlPanel: false,
-        init: function() {
+        init: function () {
             this._super.apply(this, arguments);
             this.controllerParams.mode = "readonly";
             this.loadParams.type = "record";

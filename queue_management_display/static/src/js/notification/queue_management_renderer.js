@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayControlRenderer", function(require) {
+odoo.define("queue_management.QueueDisplayControlRenderer", function (require) {
     "use strict";
 
     var BasicRenderer = require("web.BasicRenderer");
@@ -9,7 +9,7 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function(require) {
 
     var QueueDisplayControlRenderer = BasicRenderer.extend({
         className: "o_queue_management_display_view",
-        _renderView: function() {
+        _renderView: function () {
             this.channel = "queue.display_" + this.state.res_id;
             this.template_name = "queue_management_display_" + this.state.res_id;
             var template = "<templates><t t-name='" + this.template_name + "'>";
@@ -34,7 +34,7 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function(require) {
             );
 
             var self = this;
-            _.each(this.state.data.items.tokens, function(token) {
+            _.each(this.state.data.items.tokens, function (token) {
                 self.trigger_up("notification_received", {
                     notification: token,
                 });
@@ -46,9 +46,9 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function(require) {
 
             return $.when();
         },
-        _onNotification: function(notifications) {
+        _onNotification: function (notifications) {
             var self = this;
-            _.each(notifications, function(notification) {
+            _.each(notifications, function (notification) {
                 self.trigger_up("notification_received", {
                     notification: notification[1],
                 });
