@@ -1,4 +1,4 @@
-odoo.define("queue_management.Clock", function(require) {
+odoo.define("queue_management.Clock", function (require) {
     "use strict";
 
     var config = require("web.config");
@@ -12,31 +12,31 @@ odoo.define("queue_management.Clock", function(require) {
         /**
          * @override
          */
-        init: function() {
+        init: function () {
             this._super.apply(this, arguments);
             this.isMobile = config.device.isMobile;
         },
         /**
          * @override
          */
-        willStart: function() {
+        willStart: function () {
             clockTemp = this;
             return this._super();
         },
         /**
          * @override
          */
-        start: function() {
+        start: function () {
             this.renderTime();
             setInterval(this.renderTime, 1000);
             return this._super();
         },
 
-        renderTime: function() {
+        renderTime: function () {
             this.$(".main_clock").text(clockTemp.getTime());
             this.$(".main_clock_date").text(clockTemp.getDate());
         },
-        getDate: function() {
+        getDate: function () {
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, "0");
             var mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -44,7 +44,7 @@ odoo.define("queue_management.Clock", function(require) {
             var date = dd + "/" + mm + "/" + yyyy;
             return date;
         },
-        getTime: function() {
+        getTime: function () {
             var today = new Date();
             var h = today.getHours();
             var m = today.getMinutes();
@@ -55,7 +55,7 @@ odoo.define("queue_management.Clock", function(require) {
             var time = h + ":" + m;
             return time;
         },
-        checkTime: function(i) {
+        checkTime: function (i) {
             if (i < 10) {
                 i = "0" + i;
             }
