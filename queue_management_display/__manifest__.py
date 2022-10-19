@@ -16,5 +16,5 @@
         "templates/assets.xml",
     ],
     "qweb": ["static/src/xml/queue_management.xml"],
-    "demo": [],
+    "demo": ["demo/data.xml"],
 }
