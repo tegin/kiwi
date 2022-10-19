@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+    <record id="queue_display_demo_1" model="queue.display">
+       <field name="name">Display DEMO</field>
+       <field name="description">Display CreuBlanca</field>
+       <field
+            name="location_ids"
+            eval="[(4,ref('queue_management.queue_location_demo_1')),
+                                         (4,ref('queue_management.queue_location_demo_2'))]"
+        />
+    </record>
+</odoo>
