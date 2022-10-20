@@ -1,0 +1,98 @@
+.fc-list-table {
+    .o_queue_management_planning {
+        td {
+            padding: 0px 0px;
+        }
+    }
+}
+.o_search_panel.o_queue_planning_search_panel {
+    .ui-datepicker {
+        margin: 0;
+        width: 100%;
+        padding: 0;
+
+        &,
+        td,
+        .ui-datepicker-header,
+        td a,
+        td span {
+            border: 0;
+        }
+
+        th {
+            padding: 0.7em 0.2em;
+        }
+
+        td {
+            padding: 0;
+
+            a,
+            span {
+                padding: 0.2em 0.2em 0.1em;
+                float: right;
+                width: 22px;
+                background: none;
+                text-align: center;
+                color: gray("700");
+            }
+
+            &.ui-datepicker-current-day a {
+                background: $info;
+                color: color-yiq($info);
+                font-weight: bold;
+            }
+
+            &.ui-datepicker-today a {
+                border-radius: 100%;
+                padding-top: 0.3em;
+                width: 25px;
+                background: mix($o-cw-color-today-accent, white, 80%);
+                font-weight: bold;
+                color: white;
+            }
+
+            &.ui-datepicker-current-day.ui-datepicker-today a {
+                background: $o-cw-color-today-accent;
+            }
+        }
+
+        .ui-datepicker-header {
+            background: none;
+        }
+
+        .ui-datepicker-header {
+            border-radius: 0;
+
+            .ui-icon {
+                background-image: none;
+                text-indent: 0;
+                color: transparent;
+
+                &:before {
+                    font: normal normal normal 13px/1 FontAwesome;
+                    content: "\f053";
+                    color: gray("400");
+                }
+                &.ui-icon-circle-triangle-e:before {
+                    content: "\f054";
+                }
+            }
+
+            .ui-state-hover.ui-datepicker-next-hover,
+            .ui-state-hover.ui-datepicker-prev-hover {
+                background: none;
+                border: none;
+                cursor: pointer;
+
+                span:before {
+                    color: gray("800");
+                }
+            }
+        }
+
+        .o_selected_range.o_color:not(.ui-datepicker-unselectable) {
+            background-color: $info;
+            animation: backgroundfade 2s forwards;
+        }
+    }
+}
