@@ -80,6 +80,8 @@
             <tree
                 decoration-success="state == 'done'"
                 decoration-info="state == 'in-progress'"
+                create="0"
+                export_xlsx="0"
             >
                 <field name="token_id" />
                 <field name="group_id" />
