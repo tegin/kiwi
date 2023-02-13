@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+     XML which can edit the lateral bar menu of the view.
+
+    -->
+<odoo>
+    <menuitem
+        name="Queue Management"
+        id="queue_root_menu"
+        web_icon="queue_management,static/description/icon.png"
+        sequence="40"
+    />
+    <menuitem
+        name="Configuration"
+        id="queue_config_root_menu"
+        parent="queue_root_menu"
+        sequence="90"
+        groups="group_queue_admin"
+    />
+</odoo>

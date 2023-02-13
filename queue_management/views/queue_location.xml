@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Action window for users  -->
+    <record model="ir.ui.view" id="queue_location_form_view">
+        <field name="name">queue.location.form (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <header />
+                <sheet>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
+                    <div
+                        name="button_box"
+                        class="oe_button_box"
+                        attrs="{'invisible': [('active', '=', False)]}"
+                    >
+                        <button
+                            name="action_reload"
+                            type="object"
+                            string="Reload"
+                            icon="fa-refresh"
+                            invisible="0"
+                        />
+                    </div>
+                    <group>
+                        <field name="name" />
+                        <field name="group_ids" widget="many2many_tags" />
+                        <field name="state" />
+                        <field name="active" invisible="1" />
+                </group>
+                    <notebook>
+                        <page name="token" string="Work List">
+                            <field
+                                name="token_location_ids"
+                                context="{'tree_view_ref':'queue_management.queue_token_location_location_tree_view','location_id': id}"
+                            />
+                        </page>
+                        <page name="token_done" string="Tokens Done">
+                            <field
+                                name="token_location_done_ids"
+                                context="{'location_id': id}"
+                            />
+                        </page>
+                        <page name='token_cancelled' string='Cancelled Token'>
+                            <field
+                                name='token_location_cancelled_ids'
+                                context="{'location_id': id}"
+                            />
+
+
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <!-- Action window for configuration  -->
+    <record model="ir.ui.view" id="queue_location_config_form_view">
+        <field
+            name="name"
+        >queue.location.form Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <form>
+                <header />
+                <sheet>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
+                    <div
+                        name="button_box"
+                        class="oe_button_box"
+                        attrs="{'invisible': [('active', '=', False)]}"
+                    >
+                        <button
+                            name="action_reload"
+                            type="object"
+                            string="Reload"
+                            icon="fa-refresh"
+                            invisible="0"
+                        />
+                    </div>
+                    <group>
+                        <field name="name" />
+                        <field name="group_ids" widget="many2many_tags" />
+                        <field name="active" invisible="1" />
+
+                    </group>
+
+                    <notebook>
+                        <page name="token" string="Work List">
+                            <field
+                                name="token_location_ids"
+                                context="{'tree_view_ref':'queue_management.queue_token_location_location_tree_view','location_id': id}"
+                            />
+                        </page>
+                        <page name="token_done" string="Tokens Done">
+                            <field
+                                name="token_location_done_ids"
+                                context="{'location_id': id}"
+                            />
+                        </page>
+                        <page name='token_cancelled' string='Cancelled Token'>
+                            <field
+                                name='token_location_cancelled_ids'
+                                context="{'location_id': id}"
+                            />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <!-- Search for Admin and Processor  -->
+    <record model="ir.ui.view" id="queue_location_search_view">
+        <field name="name">queue.location.search (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <field name="name" />
+                <separator />
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('active', '=', 0)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree Processor  -->
+    <record model="ir.ui.view" id="queue_location_tree_view">
+        <field name="name">queue.location.tree (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0" export_xlsx="0">
+                <field name="name" />
+                <field name="token_location_ids" string="Waiting" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Tree Admin  -->
+    <record model="ir.ui.view" id="queue_location_config_tree_view">
+        <field
+            name="name"
+        >queue.location.tree Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <record id='queue_location_config_kanban_view' model='ir.ui.view'>
+        <field
+            name="name"
+        >queue.location.kanban Configuration (in queue_management)</field>
+        <field name="model">queue.location</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="token_location_count" create="0" />
+                <field name="state" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div
+                            t-attf-class="#{!selection_mode ? 'oe_kanban_queue_location_' + record.state.raw_value : ''} oe_kanban_queue_location"
+                        >
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                            <field name="name" />
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#"><i
+                                            class="fa fa-ellipsis-v"
+                                            role="img"
+                                            aria-label="Manage"
+                                            title="Manage"
+                                        /></a>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button
+                                            t-attf-class="btn btn_queue_location btn_queue_location_#{record.state.raw_value}"
+                                            name="get_formview_action"
+                                            type="object"
+                                        >
+                                            <t
+                                                t-esc="record.token_location_count.value"
+                                            /> To Do
+                                        </button>
+                                    </div>
+                                    <div class="col-12">
+                                        Current token <field name="current_token_id" />
+                                    </div>
+                                    <div class="col-12">
+                                        Last assigned on <field
+                                            name="last_token_assigned"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom" />
+                            <div
+                                class="container o_kanban_card_manage_pane dropdown-menu"
+                                role="menu"
+                            >
+                                <div class="row">
+                                    <div
+                                        class="col-6 o_kanban_card_manage_section o_kanban_manage_view"
+                                        groups="queue_management.group_queue_admin"
+                                    >
+                                        <!-- TODO: Go tho the right view, filter it-->
+                                        <a type="edit">Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <!-- View Location on configuration menu -->
+    <record model="ir.actions.act_window" id="queue_location_config_act_window">
+        <field name="name">Locations</field> <!-- TODO -->
+        <field name="res_model">queue.location</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_location_config_act_window_tree_view"
+    >
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="queue_location_config_tree_view" />
+        <field name="act_window_id" ref="queue_location_config_act_window" />
+    </record>
+
+    <record
+        model="ir.actions.act_window.view"
+        id="queue_location_config_act_window_form_view"
+    >
+
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="queue_location_config_form_view" />
+        <field name="act_window_id" ref="queue_location_config_act_window" />
+    </record>
+
+    <record model="ir.ui.menu" id="queue_location_config_menu">
+        <field name="name">Locations</field>
+        <field name="parent_id" ref="queue_config_root_menu" />
+        <field name="action" ref="queue_location_config_act_window" />
+        <field name="sequence" eval="10" /> <!-- TODO -->
+    </record>
+
+    <!-- View Location for users -->
+    <record model="ir.actions.act_window" id="queue_location_act_window">
+        <field name="name">Locations</field> <!-- TODO -->
+        <field name="res_model">queue.location</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record model="ir.ui.menu" id="queue_location_menu">
+        <field name="name">Locations</field>
+        <field name="parent_id" ref="queue_root_menu" />
+        <field name="action" ref="queue_location_act_window" />
+        <field name="sequence" eval="32" /> <!-- TODO -->
+    </record>
+
+</odoo>

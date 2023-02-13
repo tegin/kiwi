@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record model="ir.ui.view" id="queue_location_group_form_view">
+        <field name="name">queue.location.group.form (in queue_management)</field>
+        <field name="model">queue.location.group</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- TODO -->
+                </header>
+                <sheet>
+                    <!-- TODO -->
+                    <group>
+                        <field name="name" />
+                        <field name="active" invisible="1" />
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
+                    </group>
+                    <notebook>
+                        <page name="location" string="Locations">
+                            <field name="location_ids" />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_location_group_search_view">
+        <field name="name">queue.location.group.search (in queue_management)</field>
+        <field name="model">queue.location.group</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <separator />
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('active', '=', 0)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_location_group_tree_view">
+        <field name="name">queue.location.group.tree (in queue_management)</field>
+        <field name="model">queue.location.group</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_location_group_act_window">
+        <field name="name">Groups</field>
+        <field name="res_model">queue.location.group</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record model="ir.ui.menu" id="queue_location_group_menu">
+        <field name="name">Groups</field>
+        <field name="parent_id" ref="queue_config_root_menu" />
+        <field name="action" ref="queue_location_group_act_window" />
+        <field name="sequence" eval="16" />
+    </record>
+
+</odoo>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <record model="ir.ui.view" id="queue_token_form_view">
+        <field name="name">queue.token.form (in queue_management)</field>
+        <field name="model">queue.token</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <header>
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_view_log"
+                            type="object"
+                            string="Show Log"
+                            icon="fa-history"
+                        />
+                    </div>
+                    <group>
+                        <field name="name" />
+                        <field name="active" invisible="1" />
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
+                    </group>
+                    <notebook>
+                        <page name="location" string="Locations">
+                            <field
+                                name="location_ids"
+                                context="{'tree_view_ref':'queue_management.queue_token_location_editable_tree_view'}"
+                            />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter" />
+            </form>
+        </field>
+    </record>
+
+    <record id="view_queue_token_form_inherit" model="ir.ui.view">
+        <field name="name">queue.token.form.inherit</field>
+        <field name="model">queue.token</field>
+        <field name="inherit_id" ref="queue_token_form_view" />
+        <field name="groups_id" eval="[(4, ref('group_queue_planner'))]" />
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="edit">1</attribute>
+                <attribute name="create">1</attribute>
+                <attribute name="delete">1</attribute>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_search_view">
+        <field name="name">queue.token.search (in queue_management)</field>
+        <field name="model">queue.token</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <separator />
+                <filter
+                    name="state_progress"
+                    string="In progress"
+                    domain="[('state', '=', 'in-progress')]"
+                />
+                <filter
+                    name="state_done"
+                    string="Done"
+                    domain="[('state', '=', 'done')]"
+                />
+                <separator />
+                <filter
+                    name="archived"
+                    string="Archived"
+                    domain="[('active', '=', 0)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="queue_token_tree_view">
+        <field name="name">queue.token.tree (in queue_management)</field>
+        <field name="model">queue.token</field>
+        <field name="arch" type="xml">
+            <tree default_order="name desc">
+                <field name="name" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="queue_token_act_window">
+        <field name="name">Tokens</field>
+        <field name="res_model">queue.token</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_state_progress': 1}</field>
+    </record>
+
+    <record model="ir.ui.menu" id="queue_token_menu">
+        <field name="name">Tokens</field>
+        <field name="parent_id" ref="queue_root_menu" />
+        <field name="action" ref="queue_token_act_window" />
+        <field name="sequence" eval="16" />
+    </record>
+
+</odoo>
