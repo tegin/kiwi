@@ -13,6 +13,8 @@ class QueueLocationGroup(models.Model):
     _description = "Queue Location Groups"  # TODO
 
     name = fields.Char(required=True)
-    location_ids = fields.Many2many("queue.location",)
+    location_ids = fields.Many2many(
+        "queue.location",
+    )
 
     active = fields.Boolean(default=True)
