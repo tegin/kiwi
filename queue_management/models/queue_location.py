@@ -90,7 +90,11 @@ class QueueLocation(models.Model):
                 [
                     ("state", "=", "done"),
                     ("location_id", "=", record.id),
-                    ("leave_date", ">=", fields.Datetime.now() + timedelta(days=-2),),
+                    (
+                        "leave_date",
+                        ">=",
+                        fields.Datetime.now() + timedelta(days=-2),
+                    ),
                 ],
             )
 
@@ -106,7 +110,11 @@ class QueueLocation(models.Model):
                 [
                     ("state", "=", "cancelled"),
                     ("location_id", "=", record.id),
-                    ("cancel_date", ">=", fields.Datetime.now() + timedelta(days=-2),),
+                    (
+                        "cancel_date",
+                        ">=",
+                        fields.Datetime.now() + timedelta(days=-2),
+                    ),
                 ],
             )
 
