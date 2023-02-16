@@ -72,13 +72,23 @@ class QueueLocation(models.Model):
             record.token_location_ids = self.env["queue.token.location"].search(
                 [("state", "=", "in-progress"), ("location_id", "=", record.id)]
             ) | self.env["queue.token.location"].search(
-                [
-                    ("state", "=", "draft"),
-                    "|",
-                    ("location_id", "=", record.id),
-                    ("group_id", "in", record.group_ids.ids),
-                ]
+                record._get_token_location_domain(),
+                order=record._get_token_location_order(),
             )
+
+    def _get_token_location_order(self):
+        """
+        We will modify this value when planning is installed
+        """
+        return "create_date asc"
+
+    def _get_token_location_domain(self):
+        return [
+            ("state", "=", "draft"),
+            "|",
+            ("location_id", "=", self.id),
+            ("group_id", "in", self.group_ids.ids),
+        ]
 
     @api.depends()
     def _compute_token_location_done(self):
@@ -137,3 +147,6 @@ class QueueLocation(models.Model):
     def action_reload(self):
         self.ensure_one()
         return {"type": "ir.actions.act_view_reload"}
+
+    def access_location(self):
+        return self.get_formview_action()
