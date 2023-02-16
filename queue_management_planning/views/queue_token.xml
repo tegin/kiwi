@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2023 CreuBlanca
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record model="ir.ui.view" id="queue_token_form_view">
+        <field name="name">queue.token.form (in queue_management_planning)</field>
+        <field name="model">queue.token</field>
+        <field name="inherit_id" ref="queue_management.queue_token_form_view" />
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="arrival_date" />
+            </field>
+            <button name="action_view_log" position="before">
+                <button
+                    name="action_check_token"
+                    type="object"
+                    string="Check Token"
+                    icon="fa-square-o"
+                    attrs="{'invisible': [('arrival_date', '!=', False)]}"
+                />
+                <button
+                    name="action_check_token"
+                    type="object"
+                    string="Check Token"
+                    icon="fa-check-square"
+                    attrs="{'invisible': [('arrival_date', '=', False)]}"
+                />
+            </button>
+        </field>
+    </record>
+</odoo>
