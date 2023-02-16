@@ -177,7 +177,7 @@
         >queue.location.kanban Configuration (in queue_management)</field>
         <field name="model">queue.location</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_dashboard">
+            <kanban create="0" class="o_kanban_dashboard">
                 <field name="token_location_count" create="0" />
                 <field name="state" />
                 <templates>
@@ -205,7 +205,7 @@
                                     <div class="col-12">
                                         <button
                                             t-attf-class="btn btn_queue_location btn_queue_location_#{record.state.raw_value}"
-                                            name="get_formview_action"
+                                            name="access_location"
                                             type="object"
                                         >
                                             <t
