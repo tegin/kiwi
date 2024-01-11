@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayControlController", function (require) {
+odoo.define("queue_management.QueueDisplayNotificationController", function (require) {
     "use strict";
 
     var BasicController = require("web.BasicController");
@@ -6,9 +6,7 @@ odoo.define("queue_management.QueueDisplayControlController", function (require)
     var field_utils = require("web.field_utils");
     var qweb = core.qweb;
 
-    // Var clockTemp = null;
-
-    var QueueDisplayControlController = BasicController.extend({
+    var QueueDisplayNotificationController = BasicController.extend({
         custom_events: _.extend({}, BasicController.prototype.custom_events, {
             notification_received: "_onNotificationReceived",
             render_token: "_onRenderToken",
@@ -19,11 +17,17 @@ odoo.define("queue_management.QueueDisplayControlController", function (require)
         },
         _onNotificationReceived: function (ev) {
             var token = ev.data.notification;
-            token.last_call = field_utils.parse
+            var last_call = field_utils.parse
                 .datetime(token.last_call, null, {
                     timezone: false,
                 })
                 .unix();
+            if (token.last_call !== last_call) {
+                token.last_call = last_call;
+                if (ev.data.audio !== undefined) {
+                    ev.data.audio.play();
+                }
+            }
             this.queue_data[ev.data.notification.id] = token;
         },
         _onRenderToken: function () {
@@ -46,20 +50,12 @@ odoo.define("queue_management.QueueDisplayControlController", function (require)
                 self.$(".o_queue_management_display_body_content_body").append($row);
             });
         },
-        /**
-         * We just add the current ID to the state pushed. This allows the web
-         * client to add it in the url, for example.
-         *
-         * @override method from AbstractController
-         * @private
-         * @param {Object} [state]
-         */
-        _pushState: function (state) {
-            state = state || {};
-            var env = this.model.get(this.handle, {env: true});
+        getState: function () {
+            const state = this._super.apply(this, arguments);
+            const env = this.model.get(this.handle, {env: true});
             state.id = env.currentId;
-            this._super(state);
+            return state;
         },
     });
-    return QueueDisplayControlController;
+    return QueueDisplayNotificationController;
 });

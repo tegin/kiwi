@@ -25,6 +25,8 @@ class QueueDisplay(models.Model):
     )
     qweb = fields.Text(default=lambda r: r._default_qweb())
     css = fields.Text()
+    audio_file = fields.Binary()
+    audio_filename = fields.Char()
 
     def _default_qweb(self):
         return """
@@ -85,6 +87,7 @@ class QueueDisplay(models.Model):
                     ">",
                     fields.Datetime.now() + timedelta(hours=-self.max_time),
                 ),
+                ("action", "=", "call"),
             ],
             order="date desc",
         )

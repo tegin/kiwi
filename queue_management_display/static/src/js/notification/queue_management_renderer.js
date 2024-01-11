@@ -1,4 +1,4 @@
-odoo.define("queue_management.QueueDisplayControlRenderer", function (require) {
+odoo.define("queue_management.QueueDisplayNotificationRenderer", function (require) {
     "use strict";
 
     var BasicRenderer = require("web.BasicRenderer");
@@ -7,7 +7,7 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function (require) {
     var qweb = core.qweb;
     var Clock = require("queue_management.Clock");
 
-    var QueueDisplayControlRenderer = BasicRenderer.extend({
+    var QueueDisplayNotificationRenderer = BasicRenderer.extend({
         className: "o_queue_management_display_view",
         _renderView: function () {
             this.channel = "queue.display_" + this.state.res_id;
@@ -29,6 +29,15 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function (require) {
                     })
                 )
             );
+            this.audio = false;
+            if (this.state.data.audio_file) {
+                this.audio = $(
+                    '<audio class="audio_file" style="display:none" src="data:audio/mp3;base64,' +
+                        this.state.data.audio_file +
+                        '" type="audio/mp3"/>'
+                );
+                this.$el.append(this.audio);
+            }
             new Clock(this).appendTo(
                 this.$(".o_queue_management_display_header_clock")
             );
@@ -49,13 +58,16 @@ odoo.define("queue_management.QueueDisplayControlRenderer", function (require) {
         _onNotification: function (notifications) {
             var self = this;
             _.each(notifications, function (notification) {
-                self.trigger_up("notification_received", {
-                    notification: notification[1],
-                });
+                if (notification[0] === self.channel) {
+                    self.trigger_up("notification_received", {
+                        notification: notification[1],
+                        audio: self.audio[0],
+                    });
+                }
             });
             this.trigger_up("render_token");
         },
     });
 
-    return QueueDisplayControlRenderer;
+    return QueueDisplayNotificationRenderer;
 });
