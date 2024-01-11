@@ -46,19 +46,11 @@ odoo.define("queue_management.QueueDisplayNotificationController", function (req
                 self.$(".o_queue_management_display_body_content_body").append($row);
             });
         },
-        /**
-         * We just add the current ID to the state pushed. This allows the web
-         * client to add it in the url, for example.
-         *
-         * @override method from AbstractController
-         * @private
-         * @param {Object} [state]
-         */
-        _pushState: function (state) {
-            state = state || {};
-            var env = this.model.get(this.handle, {env: true});
+        getState: function () {
+            const state = this._super.apply(this, arguments);
+            const env = this.model.get(this.handle, {env: true});
             state.id = env.currentId;
-            this._super(state);
+            return state;
         },
     });
     return QueueDisplayNotificationController;
