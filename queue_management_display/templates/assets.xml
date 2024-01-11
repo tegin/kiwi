@@ -22,19 +22,6 @@
                 type="text/javascript"
                 src="/queue_management_display/static/src/js/notification/queue_management_view.js"
             />
-            <script
-                type="text/javascript"
-                src="/queue_management_display/static/src/js/control/queue_management_renderer.js"
-            />
-            <script
-                type="text/javascript"
-                src="/queue_management_display/static/src/js/control/queue_management_controller.js"
-            />
-            <script
-                type="text/javascript"
-                src="/queue_management_display/static/src/js/control/queue_management_view.js"
-            />
-
             <link
                 rel="stylesheet"
                 type="text/scss"
