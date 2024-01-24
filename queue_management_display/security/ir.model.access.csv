@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-queue_display_admin,queue.display Admin,model_queue_display,queue_management.group_queue_planner,1,1,1,1
+queue_display_planner,queue.display Admin,model_queue_display,queue_management.group_queue_planner,1,0,0,0
+queue_display_processor,queue.display Admin,model_queue_display,queue_management.group_queue_processor,1,0,0,0
+queue_display_admin,queue.display Admin,model_queue_display,queue_management.group_queue_admin,1,1,1,1
