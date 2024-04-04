@@ -45,13 +45,12 @@ class TestQueueDisplay(TransactionCase):
         """
         If we try to call a token that is already assigned, an error will be raised.
         """
-        self.token_g1.location_ids.with_context(
-            location_id=self.location_1.id
-        ).action_assign()
+        location = self.token_g1.location_ids
+        self.token_g1.write({"location_ids": [(0, 0, {"group_id": self.group_1.id})]})
+        location_2 = self.token_g1.location_ids - location
+        location.with_context(location_id=self.location_1.id).action_assign()
         with self.assertRaises(ValidationError):
-            self.token_g1.location_ids.with_context(
-                location_id=self.location_1.id
-            ).action_call()
+            location_2.with_context(location_id=self.location_1.id).action_call()
 
     def test_call_wrong_location(self):
         """
