@@ -42,7 +42,11 @@ class QueueTokenLocation(models.Model):
                 )
             )
         any_assing_token = self.search(
-            [("state", "=", "in-progress"), ("location_id", "=", location.id)]
+            [
+                ("state", "=", "in-progress"),
+                ("location_id", "=", location.id),
+                ("id", "!=", self.id),
+            ]
         )
         previous_call_token = self.search(
             [("expected_location_id", "=", location.id), ("state", "=", "draft")]
@@ -57,7 +61,11 @@ class QueueTokenLocation(models.Model):
         # We cannot call an already assigned token
         for record in self:
             if self.search(
-                [("token_id", "=", record.token_id.id), ("state", "=", "in-progress")],
+                [
+                    ("token_id", "=", record.token_id.id),
+                    ("state", "=", "in-progress"),
+                    ("id", "!=", self.id),
+                ],
                 limit=1,
             ):
                 raise ValidationError(
