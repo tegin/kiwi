@@ -48,6 +48,23 @@
                 <field name="token_id" />
                 <field name="group_id" />
                 <field name="location_id" />
+                <separator />
+                <filter
+                    name="draft"
+                    domain="[('state', '=', 'draft')]"
+                    string="Draft"
+                />
+                <filter
+                    name="in-progress"
+                    domain="[('state', '=', 'in-progress')]"
+                    string="In progress"
+                />
+                <filter name="done" domain="[('state', '=', 'done')]" string="Done" />
+                <filter
+                    name="cancelled"
+                    domain="[('state', '=', 'cancelled')]"
+                    string="Cancelled"
+                />
             </search>
         </field>
     </record>
