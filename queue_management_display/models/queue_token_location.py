@@ -16,9 +16,9 @@ class QueueTokenLocation(models.Model):
         if self.expected_location_id and not self.env.context.get(
             "ignore_expected_location"
         ):
-            action = self.env.ref(
+            action = self.env["ir.actions.act_window"]._for_xml_id(
                 "queue_management_display.queue_token_location_force_call_act_window"
-            ).read()[0]
+            )
             action["res_id"] = self.id
             action["context"] = self.env.context
             return action
