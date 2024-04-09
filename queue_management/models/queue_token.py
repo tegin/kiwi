@@ -53,8 +53,8 @@ class QueueToken(models.Model):
 
     def action_view_log(self):
         self.ensure_one()
-        action = self.env.ref(
+        action = self.env["ir.actions.act_window"]._for_xml_id(
             "queue_management.queue_token_location_action_act_window"
-        ).read()[0]
+        )
         action["domain"] = [("token_id", "=", self.id)]
         return action
