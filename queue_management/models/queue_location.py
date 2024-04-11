@@ -17,14 +17,16 @@ class QueueLocation(models.Model):
     group_ids = fields.Many2many("queue.location.group")
     token_location_count = fields.Integer(compute="_compute_token_location_count")
     last_token_assigned = fields.Datetime(compute="_compute_token_location_count")
-
+    multiple_token_management = fields.Boolean(default=False)
     token_location_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location"
     )
-    current_token_location_id = fields.Many2one(
-        "queue.token.location", compute="_compute_current_token"
+    current_token_location_ids = fields.One2many(
+        "queue.token.location",
+        inverse_name="location_id",
+        domain=[("state", "=", "in-progress")],
     )
-    current_token_id = fields.Many2one("queue.token", compute="_compute_current_token")
+    current_token = fields.Char(compute="_compute_current_token")
     token_location_done_ids = fields.Many2many(
         "queue.token.location", compute="_compute_token_location_done"
     )
@@ -37,14 +39,12 @@ class QueueLocation(models.Model):
         compute="_compute_state",
     )
 
-    @api.depends()
+    @api.depends("current_token_location_ids")
     def _compute_current_token(self):
         for record in self:
-            record.current_token_location_id = self.env["queue.token.location"].search(
-                [("location_id", "=", record.id), ("state", "=", "in-progress")],
-                limit=1,
+            record.current_token = ", ".join(
+                record.current_token_location_ids.token_id.mapped("display_name")
             )
-            record.current_token_id = record.current_token_location_id.token_id
 
     @api.depends()
     def _compute_token_location_count(self):
@@ -137,7 +137,7 @@ class QueueLocation(models.Model):
         blue: It is not working (no tokens waiting, nothing assigned)
         """
         for record in self:
-            if record.current_token_id:
+            if record.current_token_location_ids:
                 record.state = "working"
             elif record.token_location_ids:
                 record.state = "warning"

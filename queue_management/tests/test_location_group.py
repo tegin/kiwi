@@ -5,9 +5,6 @@ from odoo.tests.common import TransactionCase
 
 
 class TestLocationGroup(TransactionCase):
-    def setUp(self):
-        super().setUp()
-
     def test_creation_group(self):
         group1 = self.env["queue.location.group"].create({"name": "Test_Group1"})
         self.assertEqual(group1.name, "Test_Group1")
