@@ -66,10 +66,10 @@ class QueueDisplay(models.Model):
         Open XML id depending on wich type os self.kind you have choosed.
         """
         self.ensure_one()
-        action = self.env.ref(
+        action = self.env["ir.actions.act_window"]._for_xml_id(
             "queue_management_display.queue_display_fullscreen_%s_act_window"
             % self.kind
-        ).read()[0]
+        )
         action["res_id"] = self.id
         return action
 

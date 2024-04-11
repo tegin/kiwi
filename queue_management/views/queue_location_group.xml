@@ -12,16 +12,15 @@
                     <!-- TODO -->
                 </header>
                 <sheet>
-                    <!-- TODO -->
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
                     <group>
                         <field name="name" />
                         <field name="active" invisible="1" />
-                        <widget
-                            name="web_ribbon"
-                            title="Archived"
-                            bg_color="bg-danger"
-                            attrs="{'invisible': [('active', '=', True)]}"
-                        />
                     </group>
                     <notebook>
                         <page name="location" string="Locations">
