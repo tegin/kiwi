@@ -146,11 +146,12 @@ class QueueTokenLocation(models.Model):
         if self.location_id and self.location_id != location:
             raise ValidationError(_("Location is different to the assigned location"))
         # We well leave all previous tokens. We might want to close
-        previous_token = self.search(
-            [("location_id", "=", location.id), ("state", "=", "in-progress")]
-        )
-        if previous_token:
-            previous_token._action_leave(location)
+        if not location.multiple_token_management:
+            previous_token = self.search(
+                [("location_id", "=", location.id), ("state", "=", "in-progress")]
+            )
+            if previous_token:
+                previous_token._action_leave(location)
         self.write(self._assign_action_vals(location))
         self._add_action_log("assign", location)
 

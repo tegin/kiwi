@@ -30,7 +30,7 @@ class TestLocationKanban(TransactionCase):
 
     def test_location_kanban_fields(self):
         self.assertEqual(self.location_1.state, "warning")
-        self.assertFalse(self.location_1.current_token_location_id)
+        self.assertFalse(self.location_1.current_token_location_ids)
         self.assertEqual(1, self.location_1.token_location_count)
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
@@ -38,7 +38,7 @@ class TestLocationKanban(TransactionCase):
         self.location_1.refresh()
         self.assertEqual(self.location_1.state, "working")
         self.assertEqual(
-            self.location_1.current_token_location_id, self.token_l1.location_ids
+            self.location_1.current_token_location_ids, self.token_l1.location_ids
         )
         self.assertEqual(1, self.location_1.token_location_count)
         self.token_l1.location_ids.with_context(
@@ -46,5 +46,21 @@ class TestLocationKanban(TransactionCase):
         ).action_leave()
         self.location_1.refresh()
         self.assertEqual(self.location_1.state, "waiting")
-        self.assertFalse(self.location_1.current_token_location_id)
+        self.assertFalse(self.location_1.current_token_location_ids)
         self.assertEqual(0, self.location_1.token_location_count)
+
+    def test_multiple_location_tokens(self):
+        self.location_1.multiple_token_management = True
+        self.token_l1.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        token_l1 = self.env["queue.token"].create(
+            {"location_ids": [(0, 0, {"location_id": self.location_1.id})]}
+        )
+        token_l1.location_ids.with_context(
+            location_id=self.location_1.id
+        ).action_assign()
+        self.assertIn(
+            self.token_l1.location_ids, self.location_1.current_token_location_ids
+        )
+        self.assertIn(token_l1.location_ids, self.location_1.current_token_location_ids)

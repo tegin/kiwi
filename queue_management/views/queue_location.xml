@@ -97,7 +97,7 @@
                         <field name="name" />
                         <field name="group_ids" widget="many2many_tags" />
                         <field name="active" invisible="1" />
-
+                        <field name="multiple_token_management" />
                     </group>
 
                     <notebook>
@@ -214,7 +214,7 @@
                                         </button>
                                     </div>
                                     <div class="col-12">
-                                        Current token <field name="current_token_id" />
+                                        Current token <field name="current_token" />
                                     </div>
                                     <div class="col-12">
                                         Last assigned on <field
