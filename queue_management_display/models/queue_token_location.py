@@ -41,22 +41,25 @@ class QueueTokenLocation(models.Model):
                     than the assigned location"
                 )
             )
-        any_assing_token = self.search(
-            [
-                ("state", "=", "in-progress"),
-                ("location_id", "=", location.id),
-                ("id", "!=", self.id),
-            ]
-        )
         previous_call_token = self.search(
             [("expected_location_id", "=", location.id), ("state", "=", "draft")]
         )
         if previous_call_token:
             previous_call_token.write({"expected_location_id": False})
-        if any_assing_token:
-            raise ValidationError(
-                _("There is a token assigned in this location. PLease, close it first.")
+        if not location.multiple_token_management:
+            any_assing_token = self.search(
+                [
+                    ("state", "=", "in-progress"),
+                    ("location_id", "=", location.id),
+                    ("id", "!=", self.id),
+                ]
             )
+            if any_assing_token:
+                raise ValidationError(
+                    _(
+                        "There is a token assigned in this location. Please, close it first."
+                    )
+                )
 
         # We cannot call an already assigned token
         for record in self:
