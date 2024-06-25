@@ -9,3 +9,4 @@ class QueueLocation(models.Model):
     _inherit = "queue.location"
 
     display_ids = fields.Many2many("queue.display")
+    display_description = fields.Char()

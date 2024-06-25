@@ -103,7 +103,8 @@ class QueueDisplay(models.Model):
             {
                 "id": action.token_location_id.id,
                 "token": action.token_id.name,
-                "location": action.location_id.name,
+                "location": action.location_id.display_description
+                or action.location_id.name,
                 "last_call": fields.Datetime.to_string(action.date),
             }
             for action in final_actions
