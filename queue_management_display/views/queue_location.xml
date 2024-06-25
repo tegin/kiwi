@@ -11,6 +11,9 @@
             ref="queue_management.queue_location_config_form_view"
         />
         <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="display_description" />
+            </field>
             <notebook position='inside'>
                 <page name='display' string='Displays'>
                     <field name='display_ids' />

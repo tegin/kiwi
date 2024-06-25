@@ -95,7 +95,7 @@ class QueueTokenLocation(models.Model):
                             "id": self.id,
                             "token": self.token_id.name,
                             "last_call": fields.Datetime.to_string(action.date),
-                            "location": location.name,
+                            "location": location.display_description or location.name,
                         },
                     )
                 )
