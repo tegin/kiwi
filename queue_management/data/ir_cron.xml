@@ -10,4 +10,14 @@
         <field name='interval_type'>days</field>
         <field name="numbercall">-1</field>
     </record>
+    <record id="autocancel_job" model="ir.cron">
+        <field name="name">TokenLocation: Auto-cancel</field>
+        <field name="model_id" ref="model_queue_token_location" />
+        <field name="state">code</field>
+        <field name="active" eval="False" />
+        <field name="code">model.autocancel(hours=24)</field>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>hours</field>
+        <field name="numbercall">-1</field>
+    </record>
 </odoo>
