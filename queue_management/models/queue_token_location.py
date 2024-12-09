@@ -1,8 +1,13 @@
 # Copyright 2022 CreuBlanca
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import logging
+from datetime import timedelta
+
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class QueueTokenLocation(models.Model):
@@ -45,6 +50,49 @@ class QueueTokenLocation(models.Model):
     token_location_action_ids = fields.One2many(
         "queue.token.location.action", inverse_name="token_location_id"
     )
+
+    @api.model
+    def autocancel(self, **kwargs):
+        """
+        Automatically cancels token-location records that are in 'draft' or 'in-progress'
+        state for more than the specified number of days.
+
+        :param kwargs: Key-value arguments passed to timedelta
+        :return: True if records were cancelled.
+        """
+        if not kwargs:
+            kwargs = {"hours": 24}
+
+        expired_date = fields.Datetime.now() - timedelta(**kwargs)
+
+        in_progress_records = self.search(
+            [
+                ("state", "=", "in-progress"),
+                ("assign_date", "<", expired_date),
+            ]
+        )
+        draft_records = self.search(
+            [
+                ("state", "=", "draft"),
+                ("create_date", "<", expired_date),
+            ]
+        )
+
+        records_to_cancel = in_progress_records | draft_records
+
+        if records_to_cancel:
+            # Perform batch write to cancel the records
+            records_to_cancel.write({"state": "cancelled", "location_id": False})
+            records_to_cancel._add_action_log("cancel", False)
+
+            _logger.info(
+                "Successfully autocancelled %s token-location records.",
+                len(records_to_cancel),
+            )
+        else:
+            _logger.info("No token-location records needed autocancelling.")
+
+        return True
 
     @api.depends(
         "state", "token_location_action_ids.action", "token_location_action_ids.date"
