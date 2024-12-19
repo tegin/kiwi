@@ -10,7 +10,7 @@ class QueueToken(models.Model):
     """
 
     _name = "queue.token"
-    _description = "Queue Token"  # TODO
+    _description = "Queue Token"
 
     name = fields.Char(
         required=True, readonly=True, index=True, default=lambda self: _("New")

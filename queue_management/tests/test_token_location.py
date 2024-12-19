@@ -2,10 +2,10 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo.exceptions import ValidationError
-from odoo.tests.common import SavepointCase
+from odoo.tests.common import TransactionCase
 
 
-class TestTokenLocation(SavepointCase):
+class TestTokenLocation(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -164,7 +164,7 @@ class TestTokenLocation(SavepointCase):
         self.assertTrue(self.token_g1.location_ids.leave_date)
         self.assertTrue(self.token_g1.location_ids.leave_user_id)
         # We need to refresh the location because depends are not related to token.location
-        self.location_1.refresh()
+        self.location_1.invalidate_recordset()
         self.assertIn(
             self.token_g1, self.location_1.token_location_done_ids.mapped("token_id")
         )
@@ -395,13 +395,13 @@ class TestTokenLocation(SavepointCase):
         self.token_l2.location_ids.action_cancel()
         self.assertEqual(self.token_l2.location_ids.location_id, self.location_2)
         self.assertEqual(self.token_l2.location_ids.state, "cancelled")
-        self.location_2.refresh()
+        self.location_2.invalidate_recordset()
         self.assertIn(
             self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
         )
         self.token_l2.location_ids.action_reopen_cancelled()
         self.assertEqual(self.token_l2.location_ids.state, "draft")
-        self.location_2.refresh()
+        self.location_2.invalidate_recordset()
         self.assertNotIn(
             self.token_l2.location_ids, self.location_2.token_location_cancelled_ids
         )

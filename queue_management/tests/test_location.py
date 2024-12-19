@@ -35,7 +35,7 @@ class TestLocationKanban(TransactionCase):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_assign()
-        self.location_1.refresh()
+        self.location_1.invalidate_recordset()
         self.assertEqual(self.location_1.state, "working")
         self.assertEqual(
             self.location_1.current_token_location_ids, self.token_l1.location_ids
@@ -44,7 +44,7 @@ class TestLocationKanban(TransactionCase):
         self.token_l1.location_ids.with_context(
             location_id=self.location_1.id
         ).action_leave()
-        self.location_1.refresh()
+        self.location_1.invalidate_recordset()
         self.assertEqual(self.location_1.state, "waiting")
         self.assertFalse(self.location_1.current_token_location_ids)
         self.assertEqual(0, self.location_1.token_location_count)
