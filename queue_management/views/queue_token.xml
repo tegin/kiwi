@@ -44,17 +44,19 @@
         </field>
     </record>
 
-    <record id="view_queue_token_form_inherit" model="ir.ui.view">
-        <field name="name">queue.token.form.inherit</field>
+    <record id="queue_token_form_view_planner" model="ir.ui.view">
+        <field name="name">queue.token.form.planner</field>
         <field name="model">queue.token</field>
-        <field name="inherit_id" ref="queue_token_form_view" />
-        <field name="groups_id" eval="[(4, ref('group_queue_planner'))]" />
+        <field name="inherit_id" ref="queue_management.queue_token_form_view" />
         <field name="arch" type="xml">
-            <form position="attributes">
-                <attribute name="edit">1</attribute>
+            <xpath expr="//form" position="attributes">
                 <attribute name="create">1</attribute>
+                <attribute name="edit">1</attribute>
                 <attribute name="delete">1</attribute>
-            </form>
+            </xpath>
+            <!-- <field name="location_ids" position="attributes">
+                <attribute name="context">{'create': False, 'edit': False, 'delete': False}</attribute>
+            </field> -->
         </field>
     </record>
 
@@ -102,6 +104,28 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
         <field name="context">{'search_default_state_progress': 1}</field>
+        <field
+            name="views"
+            eval="[(ref('queue_management.queue_token_tree_view'), 'tree'),
+            (ref('queue_management.queue_token_form_view'), 'form')]"
+        />
+    </record>
+
+    <record id="queue_token_act_window_planner" model="ir.actions.act_window">
+        <field name="name">Tokens (Planner)</field>
+        <field name="res_model">queue.token</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_state_progress': 1}</field>
+        <field
+            name="views"
+            eval="[(ref('queue_management.queue_token_tree_view'), 'tree'),
+                                (ref('queue_management.queue_token_form_view_planner'), 'form')]"
+        />
+        <field
+            name="groups_id"
+            eval="[(4, ref('queue_management.group_queue_planner'))]"
+        />
     </record>
 
     <record model="ir.ui.menu" id="queue_token_menu">

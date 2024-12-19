@@ -122,5 +122,6 @@ class TestTokenLocationAction(TransactionCase):
         action = self.token_l1.action_view_log()
         self.assertTrue(self.env[action["res_model"]].search(action["domain"]))
         self.env["queue.token.location.action"].autovacuum()
-        self.env[action["res_model"]].refresh()
+        self.env[action["res_model"]].browse(action["domain"]).invalidate_recordset()
+        # self.env[action["res_model"]].refresh()
         self.assertFalse(self.env[action["res_model"]].search(action["domain"]))

@@ -5,11 +5,11 @@
     "name": "Queue Management",
     "summary": """
         Management of queue""",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "license": "AGPL-3",
     "author": "CreuBlanca,Odoo Community Association (OCA)",
     "website": "https://github.com/tegin/kiwi",
-    "depends": ["web_ir_actions_act_view_reload"],
+    "depends": ["web_refresher"],
     "category": "Queue management",
     "data": [
         "security/security.xml",
@@ -23,7 +23,11 @@
         "views/queue_token.xml",
         "views/queue_token_location_action.xml",
         "reports/queue_token_location_reporting.xml",
-        "templates/assets.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "/queue_management/static/src/scss/queue_management.scss",
+        ]
+    },
     "demo": ["demo/security.xml", "demo/data.xml"],
 }
