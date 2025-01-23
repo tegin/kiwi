@@ -3,7 +3,7 @@
 
 {
     "name": "Queue Management Display",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "license": "AGPL-3",
     "website": "https://github.com/tegin/kiwi",
     "author": "CreuBlanca",
@@ -13,8 +13,14 @@
         "views/queue_location.xml",
         "security/ir.model.access.csv",
         "views/queue_display.xml",
-        "templates/assets.xml",
     ],
     "qweb": ["static/src/xml/queue_management.xml"],
     "demo": ["demo/data.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "/queue_management_display/static/src/**/.js",
+            "/queue_management_display/static/src/**/.scss",
+            "/queue_management_display/static/src/**/*.xml",
+        ]
+    },
 }

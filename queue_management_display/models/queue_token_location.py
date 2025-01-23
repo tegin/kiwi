@@ -80,7 +80,7 @@ class QueueTokenLocation(models.Model):
                 )
         self.write(self._call_action_vals(location))
         action = self._add_action_log("call", location)
-        self.env["bus.bus"].sendmany(
+        self.env["bus.bus"]._sendmany(
             self._get_channel_call_notifications(location, action)
         )
 
@@ -90,6 +90,7 @@ class QueueTokenLocation(models.Model):
             if display.kind == "notification":
                 notifications.append(
                     (
+                        self.env.user.partner_id,
                         ("%s_%s" % (display._name, display.id)),
                         {
                             "id": self.id,
