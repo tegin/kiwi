@@ -57,7 +57,7 @@ odoo.define("queue_management.Clock", function (require) {
         },
         checkTime: function (i) {
             if (i < 10) {
-                i = "0" + i;
+                var i = "0" + i;
             }
             return i;
         },
