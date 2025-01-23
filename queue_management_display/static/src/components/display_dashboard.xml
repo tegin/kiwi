@@ -1,0 +1,27 @@
+<templates xml:space="preserve">
+    <t t-name="queue_management_display.QueueDisplayDashboard" owl="1">
+    <div class="container-fluid p-2">
+        <div
+                class="d-flex justify-content-between p-4"
+                style="background-color: #05BA6E;"
+            >
+                <img
+                    t-if="company.logo"
+                    t-att-src="image_data_uri(company.logo)"
+                    t-att-style="'max-height: %dmm;' % (din_header_spacing or 35)"
+                />
+                <h2 t-esc="state.title" class="text-white" />
+                <h2 t-esc="state.title" class="text-white" />
+      </div>
+            <div style="height: 300px;" />
+            <div class="text-center text-white" style="background-color: #05BA6E;">
+                <div class="text-center p-3" style="background-color: #05BA6E;"> © 2020
+                    Copyright: <a
+                        class="text-white"
+                        href="https://mdbootstrap.com/"
+                    >MDBootstrap.com</a>
+                </div>
+            </div>
+    </div>
+  </t>
+</templates>
