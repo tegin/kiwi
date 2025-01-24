@@ -14,13 +14,12 @@
         "security/ir.model.access.csv",
         "views/queue_display.xml",
     ],
-    "qweb": ["static/src/xml/queue_management.xml"],
+    # "qweb": ["static/src/xml/queue_management.xml"],
     "demo": ["demo/data.xml"],
     "assets": {
         "web.assets_backend": [
-            "/queue_management_display/static/src/**/.js",
-            "/queue_management_display/static/src/**/.scss",
-            "/queue_management_display/static/src/**/*.xml",
+            "/queue_management_display/static/src/components/**/*.js",
+            "/queue_management_display/static/src/components/**/*.xml",
         ]
     },
 }

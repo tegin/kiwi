@@ -13,6 +13,11 @@
         </field>
     </record>
 
+    <record id="action_open_display" model="ir.actions.client">
+        <field name="name">Display</field>
+        <field name="tag">queue_management_display.queue_display_dashboard</field>
+    </record>
+
     <!-- Default view -->
     <record model="ir.ui.view" id="queue_display_form_view">
         <field name="name">queue.display.form (in queue_management_display)</field>
@@ -22,10 +27,10 @@
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button
-                            name="open_display"
+                            type="action"
+                            name="%(queue_management_display.action_open_display)d"
                             string="Open display"
                             icon="fa-tachometer"
-                            type="object"
                         />
                     </div>
                     <group>
