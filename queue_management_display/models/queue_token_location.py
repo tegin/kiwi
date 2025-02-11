@@ -90,12 +90,13 @@ class QueueTokenLocation(models.Model):
             if display.kind == "notification":
                 notifications.append(
                     (
-                        self.env.user.partner_id,
-                        ("%s_%s" % (display._name, display.id)),
+                        display,
+                        "%s:%s" % (display._name, display.id),
                         {
                             "id": self.id,
                             "token": self.token_id.name,
                             "last_call": fields.Datetime.to_string(action.date),
+                            "last_call_int": action.date.timestamp(),
                             "location": location.display_description or location.name,
                         },
                     )
