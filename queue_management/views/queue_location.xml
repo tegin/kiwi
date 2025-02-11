@@ -40,12 +40,9 @@
                                 name='token_location_cancelled_ids'
                                 context="{'location_id': id}"
                             />
-
-
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter" />
             </form>
         </field>
     </record>
