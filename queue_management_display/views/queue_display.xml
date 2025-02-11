@@ -16,6 +16,7 @@
     <record id="action_open_display" model="ir.actions.client">
         <field name="name">Display</field>
         <field name="tag">queue_management_display.queue_display_dashboard</field>
+        <field name="target">fullscreen</field>
     </record>
 
     <!-- Default view -->

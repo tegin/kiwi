@@ -3,6 +3,8 @@
 
 from datetime import timedelta
 
+from lxml import etree
+
 from odoo import api, fields, models
 
 
@@ -24,9 +26,33 @@ class QueueDisplay(models.Model):
         required=True,
     )
     qweb = fields.Text(default=lambda r: r._default_qweb())
+    parsed_qweb = fields.Html(compute="_compute_parsed_qweb")
     css = fields.Text()
     audio_file = fields.Binary()
     audio_filename = fields.Char()
+
+    def get_data(self):
+        self.ensure_one()
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "parsed_qweb": self.parsed_qweb,
+            "items": self.items,
+            "css": self.css,
+            "audio_file": self.audio_file,
+            "shiny_time": self.shiny_time,
+            "max_time": self.max_time,
+            "show_items": self.show_items,
+        }
+
+    @api.depends("qweb")
+    def _compute_parsed_qweb(self):
+        qweb = self.env["ir.qweb"]
+        for record in self:
+            record.parsed_qweb = qweb._render(
+                etree.fromstring(record.qweb), {"data": self}
+            )
 
     def _default_qweb(self):
         return """
@@ -106,6 +132,7 @@ class QueueDisplay(models.Model):
                 "location": action.location_id.display_description
                 or action.location_id.name,
                 "last_call": fields.Datetime.to_string(action.date),
+                "last_call_int": action.date.timestamp(),
             }
             for action in final_actions
         ]
