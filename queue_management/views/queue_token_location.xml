@@ -33,7 +33,6 @@
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter" />
             </form>
         </field>
     </record>
