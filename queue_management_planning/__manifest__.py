@@ -5,11 +5,11 @@
     "name": "Queue Management Planning",
     "summary": """
         New module for planning""",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "license": "AGPL-3",
     "author": "CreuBlanca",
     "website": "https://github.com/tegin/kiwi",
-    "depends": ["queue_management", "web_view_calendar_list"],
+    "depends": ["queue_management"],
     "data": [
         "views/queue_token_location.xml",
         "views/queue_token.xml",
