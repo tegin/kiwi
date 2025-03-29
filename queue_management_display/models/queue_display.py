@@ -56,34 +56,35 @@ class QueueDisplay(models.Model):
 
     def _default_qweb(self):
         return """
-            <div class="row o_queue_management_display_header">
-                <div class="col-2 queue_logo">
-                    <img t-attf-src="/logo.png?company=#{company_id}" t-attf-alt="#{company}" />
-                </div>
-                <div class="col-8 o_queue_management_display_header_title">
-                    <h1 t-esc="data.description" />
-                </div>
-                <div class="col-2 o_queue_management_display_header_datetime">
-                    <div class="o_queue_management_display_header_clock" />
-                </div>
-            </div>
-            <div class="row o_queue_management_display_body">
-                <div class="col-4 o_queue_management_display_body_content">
-                    <div class="o_queue_management_display_body_content_header row">
-                        <t t-call="queue_management_display.queue_display_token">
-                            <t t-set="token">Token</t>
-                            <t t-set="location">Location</t>
-                        </t>
+            <div>
+                <div class="row o_queue_management_display_header">
+                    <div class="col-2 queue_logo">
+                        <img
+                            t-attf-src="/logo.png?company=#{company_id}"
+                            t-attf-alt="#{company}" />
 
                     </div>
-                    <div class="o_queue_management_display_body_content_body row" />
+                    <div class="col-8 o_queue_management_display_header_title">
+                        <h1 t-esc="data.description" />
+                    </div>
+                    <div class="col-2 o_queue_management_display_header_datetime">
+                        <div class="o_queue_management_display_header_clock" />
+                    </div>
                 </div>
-                <div class="col-8  o_queue_management_display_advertising">
-                    <!-- TODO: Add your video here -->
+                <div class="row o_queue_management_display_body">
+                    <div class="col-4 o_queue_management_display_body_content">
+                        <div class="o_queue_management_display_body_content_header row">
+
+                        </div>
+                        <div class="o_queue_management_display_body_content_body row" />
+                    </div>
+                    <div class="col-8  o_queue_management_display_advertising">
+                        <!-- TODO: Add your video here -->
+                    </div>
                 </div>
-            </div>
-            <div class="row o_queue_management_display_footer">
-                <!-- TODO: Add Your Social Media data here -->
+                <div class="row o_queue_management_display_footer">
+                    <!-- TODO: Add Your Social Media data here -->
+                </div>
             </div>
         """
 
