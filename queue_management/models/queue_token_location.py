@@ -19,21 +19,29 @@ class QueueTokenLocation(models.Model):
 
     _name = "queue.token.location"
     _description = "Queue Token-Location"
+    _order = "sequence asc, id asc"
 
     group_id = fields.Many2one("queue.location.group")
     location_id = fields.Many2one("queue.location")
     token_id = fields.Many2one("queue.token", required=True, auto_join=True)
     state = fields.Selection(
         [
+            ("waiting", "Waiting"),
             ("draft", "Pending"),
             ("in-progress", "In Progress"),
             ("done", "Done"),
             ("cancelled", "Cancelled"),
         ],
-        default="draft",
+        default="waiting",
         required=True,
         readonly=True,
     )
+    # Waiting: We are waiting for a previous location to be done
+    # Draft: We are waiting to be assigned to a location
+    # In-progress: We are attending the token
+    # Done: We have finished attending the token
+    # Cancelled: The token has been cancelled
+    # Only one in-progress location per token should exist
 
     active = fields.Boolean(default=True)
 
@@ -50,6 +58,7 @@ class QueueTokenLocation(models.Model):
     token_location_action_ids = fields.One2many(
         "queue.token.location.action", inverse_name="token_location_id"
     )
+    sequence = fields.Integer(default=20)
 
     @api.model
     def autocancel(self, **kwargs):
@@ -168,7 +177,7 @@ class QueueTokenLocation(models.Model):
                 [
                     ("id", "!=", record.id),
                     ("token_id", "=", record.token_id.id),
-                    ("state", "=", "in-progress"),
+                    ("state", "in", ["in-progress", "draft"]),
                 ],
                 limit=1,
             ):
